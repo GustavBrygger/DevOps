@@ -1,17 +1,28 @@
-FROM golang:jessie
+FROM golang:bullseye
 
-# Install any needed dependencies...
-# RUN go get ...
+
+
+RUN apt-get update
+RUN apt-get install htop -y
 
 # Set the working directory
-WORKDIR /src
+WORKDIR /app
 
-COPY server.go /src/server.go
+RUN go install github.com/cosmtrek/air@latest
 
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the server code into the container
+#COPY . .
+
+RUN go get ./...
 
 # Make port 8080 available to the host
 EXPOSE 8080
 
 # Build and run the server when the container is started
-RUN go build src/server.go
-ENTRYPOINT src/server.go
+#RUN go build /app/server.go
+#ENTRYPOINT ./server
+
+CMD ["air"]
