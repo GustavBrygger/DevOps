@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"log"
 	"fmt"
 	"net/http"
@@ -86,26 +87,6 @@ func public_timeline(c *gin.Context){
 }
 
 
-/*func login2(c *gin.Context){
-    """Logs the user in."""
-    if g.user:
-        return redirect(url_for('timeline'))
-    error = None
-    if request.method == 'POST':
-        user = query_db('''select * from user where
-            username = ?''', [request.form['username']], one=True)
-        if user is None:
-            error = 'Invalid username'
-        elif not check_password_hash(user['pw_hash'],
-                                     request.form['password']):
-            error = 'Invalid password'
-        else:
-            flash('You were logged in')
-            session['user_id'] = user['user_id']
-            return redirect(url_for('timeline'))
-    return render_template('login.html', error=error)
-}*/
-
 func CheckPasswordHash(password, hash string) bool {
     err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
     return err == nil
@@ -118,38 +99,64 @@ func HashPassword(password string) (string, error) {
 
 
 func login(c *gin.Context) {
+
+	/*rows, err := DB.QueryRow("SELECT * FROM user WHERE username = ?", "hello")
+	defer rows.Close()
+	for rows.Next() {
+		//var _id int
+		usr := User{}
+		err := rows.Scan(&usr.User_id, &usr.Username, &usr.Email, &usr.Pw_hash )
+		fmt.Println(usr)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+	}*/
+	
 	session := sessions.Default(c)
 	if userID := session.Get("user_id"); userID != nil {
+		fmt.Println("WHAT JHJKHKJ")
 		c.Redirect(http.StatusFound, "/timeline")
 		return
 	}
 
+	fmt.Println(session);
 	var error string
-	if c.Request.Method == http.MethodPost {
-		username := c.PostForm("username")
-		user, err := DB.Query("SELECT * FROM user WHERE username = ?", username)
+	usr := User{}
 
-		usr := User{}
+	//if c.Request.Method == http.MethodPost {
+		//username := c.PostForm("username")
+		username := "hello"
+		user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
+		
+		defer user.Close()
 
-		user.Scan(&usr.User_id, &usr.Username, &usr.Email, &usr.Pw_hash)
-
+		for user.Next() {
+			user.Scan(&usr.User_id, &usr.Username, &usr.Email, &usr.Pw_hash)
+			break
+		}
+		
+		fmt.Println(usr)
 		if err != nil{
 			log.Fatal(err);
 		}
 		if user == nil {
 			fmt.Println("Invalid username");
-		} else if !CheckPasswordHash(c.PostForm("password"), usr.Pw_hash) {
+		} else if !CheckPasswordHash("secret", usr.Pw_hash) {
 			fmt.Println("Invalid password");
 		} else {
 			session.Set("flash", "You were logged in")
 			session.Set("user_id", usr.User_id)
 			session.Save()
-			c.Redirect(http.StatusFound, "/timeline")
+			fmt.Println(":)")
+			c.Redirect(http.StatusFound, "/public")
 			return
 		}
-	}
+	//}
 
-	c.HTML(http.StatusOK, "login.html", gin.H{"error": error})
+	c.JSON(http.StatusOK, gin.H{"error":error, "user": usr});
+	//c.HTML(http.StatusOK, "login.html", gin.H{"error": error})
 }
 
 func register(c *gin.Context){
@@ -185,6 +192,9 @@ func register(c *gin.Context){
 
 func main() {
 	r := gin.Default()
+	store := cookie.NewStore([]byte("secret"))
+	r.Use(sessions.Sessions("mysession", store))
+
 	r.LoadHTMLFiles("./template/timeline.html")
 
 	ConnectDatabase()

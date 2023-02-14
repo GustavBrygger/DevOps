@@ -10,9 +10,7 @@ WORKDIR /app
 
 RUN go install github.com/cosmtrek/air@latest
 
-COPY go.mod go.sum ./
-RUN go mod download
-
+#RUN go mod download
 # Copy the server code into the container
 #COPY . .
 
