@@ -1,11 +1,49 @@
-<html>
-	<head>
-		<title>Example</title>
-	</head>
-	<body>
-		<h1>User Information</h1>
-        {{range .messages}}
-		    <p>text: {{ .Text }}</p>
-        {{ end }}
-	</body>
-</html>
+{% extends "template/layout.html" %}
+{% block title %}
+  {% if request.Endpoint == 'public_timeline' %}
+    Public Timeline
+  {% elif request.Endpoint == 'user_timeline' %}
+    {{ profile_user.Username }}'s Timeline
+  {% else %}
+    My Timeline
+  {% endif %}
+{% endblock %}
+{% block body %}
+  <h2>
+	{% if request.Endpoint == 'public_timeline' %}
+    Public Timeline
+  {% elif request.Endpoint == 'user_timeline' %}
+    {{ profile_user.Username }}'s Timeline
+  {% else %}
+    My Timeline
+  {% endif %}
+  </h2>
+ {% if g.user %}
+    {% if request.Endpoint == 'user_timeline' %}
+      <div class=followstatus>
+      {% if g.User.User_id == profile_user.User_id %}
+        This is you!
+      {% elif followed %}
+        You are currently following this user.
+        <a class=unfollow 
+          >Unfollow user</a>.
+      {% else %}
+        You are not yet following this user.
+        <a class=follow>Follow user</a>.
+      {% endif %}
+      </div>
+    {% elif request.Endpoint == 'timeline' %}
+      <div class=twitbox>
+        <h3>What's on your mind {{ g.User.Username }}?</h3>
+      </div>
+	  {% endif %}
+	  {% endif %}
+	  <ul class=messages>
+		{% for message in messages %}
+		  <li>
+			{{ message.Username }}
+			{{ message.Text }}
+			<small>&mdash; {{ message.Pub_date }}</small>
+		{% endfor %}
+		</ul>
+{% endblock %}

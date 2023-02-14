@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
+	"github.com/noirbizarre/gonja"
 	"log"
 	"fmt"
 	"net/http"
@@ -39,11 +40,14 @@ type Message struct {
 	Flagged int `json:"flagged"`
 }
 
+
 func public_timeline(c *gin.Context){
 	//var ids []int
 
 	messages := make([]Message, 0);
 	users := make([]User, 0);
+	session := sessions.Default(c)
+	userID := session.Get("user_id")
 
 	rows, err := DB.Query("SELECT message.*, user.* from message, user where message.flagged = 0 and message.author_id = user.user_id order by message.pub_date desc LIMIT 30")
 	
@@ -68,22 +72,26 @@ func public_timeline(c *gin.Context){
 		users = append(users, usr)
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"messages":messages,
-		"users":users,
-	})
-
-	/*c.HTML(http.StatusOK, "timeline.html", gin.H{
-		"messages": messages,
-	})*/
-
-	//var tpl = gonja.Must(gonja.FromFile("timeline.html"))*/
-
+	var tpl = gonja.Must(gonja.FromFile("template/timeline.html"))
 	
-    /*return render_template('timeline.html', messages=query_db('''
-        select message.*, user.* from message, user
-        where message.flagged = 0 and message.author_id = user.user_id
-        order by message.pub_date desc limit ?''', [PER_PAGE]))*/
+	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", userID)	
+	usr := User{}
+	user.Scan(&usr.User_id, &usr.Username, &usr.Email, &usr.Pw_hash)
+
+	req := struct {
+		Endpoint string
+	}{
+		Endpoint: c.Request.URL.Path,
+	}
+
+	out, err := tpl.Execute(gonja.Context{
+		"messages": messages,
+		"g": session,
+		"request": req,
+		"profile_user": usr,
+	})
+	
+	c.Writer.WriteString(out)
 }
 
 
@@ -196,6 +204,7 @@ func main() {
 	r.Use(sessions.Sessions("mysession", store))
 
 	r.LoadHTMLFiles("./template/timeline.html")
+	r.Static("/static", "./static/")
 
 	ConnectDatabase()
 
