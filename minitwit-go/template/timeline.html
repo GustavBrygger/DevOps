@@ -1,6 +1,6 @@
 {% extends "template/layout.html" %}
 {% block title %}
-  {% if request.Endpoint == 'public_timeline' %}
+  {% if request.Endpoint == '/public' %}
     Public Timeline
   {% elif request.Endpoint == 'user_timeline' %}
     {{ profile_user.Username }}'s Timeline
@@ -10,7 +10,7 @@
 {% endblock %}
 {% block body %}
   <h2>
-	{% if request.Endpoint == 'public_timeline' %}
+	{% if request.Endpoint == '/public' %}
     Public Timeline
   {% elif request.Endpoint == 'user_timeline' %}
     {{ profile_user.Username }}'s Timeline
@@ -43,7 +43,7 @@
 		  <li>
 			{{ message.Username }}
 			{{ message.Text }}
-			<small>&mdash; {{ message.Pub_date }}</small>
+			<small>&mdash; {{ message.Formatted_date }}</small>
 		{% endfor %}
 		</ul>
 {% endblock %}

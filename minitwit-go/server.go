@@ -11,6 +11,7 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 var DB *sql.DB
@@ -38,6 +39,7 @@ type Message struct {
 	Text    string `json:"text"`
 	Pub_date int `json:"pub_date"`
 	Flagged int `json:"flagged"`
+	Formatted_date string `json:"formatted_date"`
 }
 
 
@@ -54,7 +56,6 @@ func public_timeline(c *gin.Context){
 	if err != nil{
 		log.Fatal(err)
 	}
-	//fmt.Println(rows)
 	
 	defer rows.Close()
 	for rows.Next() {
@@ -63,6 +64,8 @@ func public_timeline(c *gin.Context){
 		usr := User{}
 		err := rows.Scan(&msg.Message_id, &msg.Author_id, &msg.Text, &msg.Pub_date, &msg.Flagged, &usr.User_id, &usr.Username, &usr.Email, &usr.Pw_hash )
 
+		str := "Mon, 02 Jan 2006 15:04:05"
+		msg.Formatted_date = time.Unix(int64(msg.Pub_date), 0).Format(str)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -91,6 +94,7 @@ func public_timeline(c *gin.Context){
 		"profile_user": usr,
 	})
 	
+	fmt.Println(err)
 	c.Writer.WriteString(out)
 }
 
