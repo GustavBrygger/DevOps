@@ -40,6 +40,7 @@ type Message struct {
 	Pub_date int `json:"pub_date"`
 	Flagged int `json:"flagged"`
 	Formatted_date string `json:"formatted_date"`
+	Username string `json:"username"`
 }
 
 
@@ -70,6 +71,7 @@ func public_timeline(c *gin.Context){
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
+		msg.Username = usr.Username
 
 		messages = append(messages, msg)
 		users = append(users, usr)

@@ -41,7 +41,7 @@
 	  <ul class=messages>
 		{% for message in messages %}
 		  <li>
-			{{ message.Username }}
+			<strong><a>{{ message.Username }}</a></strong>
 			{{ message.Text }}
 			<small>&mdash; {{ message.Formatted_date }}</small>
 		{% endfor %}
