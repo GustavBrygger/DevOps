@@ -18,12 +18,12 @@ Itu miniTwit
 
 - Register method
     - Base functionality [x]
-    - Post route [] (Mangler frontend, Niklas har lavet base func)
-        - format html jinja template []
-        - Render template []
-    - Get route []  (Mangler frontend, Niklas har lavet base func)
-        - format html jinja template []
-        - Render template []
+    - Post route [x] (Mangler frontend, Niklas har lavet base func)
+        - format html jinja template [x]
+        - Render template [x]
+    - Get route [x]  (Mangler frontend, Niklas har lavet base func)
+        - format html jinja template [x]
+        - Render template [x]
 
 
 - Public timeline / timeline
@@ -36,7 +36,7 @@ Itu miniTwit
         - Css [x]
         - Message dates [x]
         - User links [] <- **depends on User timeline** 
-        - Post message []
+        - Post message [x]
 
 - User timeline
     - Base functionality []
@@ -46,7 +46,9 @@ Itu miniTwit
     - Follow user []
     - Unfollow user []
 
-- Post message []
-    - Frontend? []
+- Post message [x]
+    - Frontend? [x]
 
+- Run python flask app and see page-ination []
 
+- Make release for tuesday 

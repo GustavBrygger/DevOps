@@ -29,6 +29,11 @@ func ConnectDatabase() error {
 	return nil
 }
 
+type CookieInfo struct {
+	Username string `json:"username"`
+	UserID   int    `json:"user_id"`
+}
+
 type User struct {
 	User_id  int    `json:"id"`
 	Username string `json:"username"`
@@ -48,12 +53,23 @@ type Message struct {
 }
 
 func public_timeline(c *gin.Context) {
-	//var ids []int
 
 	messages := make([]Message, 0)
 	users := make([]User, 0)
 	session := sessions.Default(c)
 	userID := session.Get("user_id")
+	username := session.Get("username")
+
+	cookie_info := CookieInfo{}
+
+	if userID != nil {
+		cookie_info.UserID = userID.(int)
+		cookie_info.Username = username.(string)
+
+	}
+
+	fmt.Println(userID)
+	fmt.Println(username)
 
 	rows, err := DB.Query("SELECT message.*, user.* from message, user where message.flagged = 0 and message.author_id = user.user_id order by message.pub_date desc LIMIT 30")
 
@@ -76,7 +92,6 @@ func public_timeline(c *gin.Context) {
 		}
 		msg.Username = usr.Username
 		msg.Gravatar = geturl(usr.Email)
-		fmt.Println(msg.Gravatar)
 
 		messages = append(messages, msg)
 		users = append(users, usr)
@@ -93,15 +108,18 @@ func public_timeline(c *gin.Context) {
 	}{
 		Endpoint: c.Request.URL.Path,
 	}
+	println(req.Endpoint)
 
 	out, err := tpl.Execute(gonja.Context{
 		"messages":     messages,
-		"g":            session,
+		"g":            cookie_info,
 		"request":      req,
 		"profile_user": usr,
 	})
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	fmt.Println(err)
 	c.Writer.WriteString(out)
 }
 
@@ -133,12 +151,11 @@ func login(c *gin.Context) {
 
 	session := sessions.Default(c)
 	if userID := session.Get("user_id"); userID != nil {
-		fmt.Println("WHAT JHJKHKJ")
-		c.Redirect(http.StatusFound, "/timeline")
+		fmt.Println("already logged in")
+		c.Redirect(http.StatusFound, "/")
 		return
 	}
 
-	fmt.Println(session)
 	var error string
 	usr := User{}
 
@@ -155,18 +172,19 @@ func login(c *gin.Context) {
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	if user == nil {
 		fmt.Println("Invalid username")
 	} else if !CheckPasswordHash("secret", usr.Pw_hash) {
 		fmt.Println("Invalid password")
 	} else {
+		fmt.Println("We logged the fuck in")
 		session.Set("flash", "You were logged in")
 		session.Set("user_id", usr.User_id)
+		session.Set("username", usr.Username)
 		session.Save()
-		fmt.Println(":)")
-		c.Redirect(http.StatusFound, "/public")
+		c.Redirect(http.StatusFound, "/")
 		return
 	}
 	//}
@@ -215,6 +233,41 @@ func geturl(email string) string {
 	return url
 }
 
+func add_message(c *gin.Context) {
+	session := sessions.Default(c)
+	if userID := session.Get("user_id"); userID == nil {
+		c.Redirect(http.StatusFound, "/")
+		return
+	}
+
+	cur_date := time.Now().Unix()
+	text := c.PostForm("text")
+	stmt, err := DB.Prepare(fmt.Sprintf("INSERT INTO message (author_id, text, pub_date, flagged) VALUES('%d', '%s', '%d', 0)", session.Get("user_id"), text, cur_date))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer stmt.Close()
+
+	// Execute the insert statement with the desired values
+	result, err := stmt.Exec()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Get the ID of the inserted record
+	id, err := result.LastInsertId()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Record inserted with ID:", id)
+
+	c.Redirect(http.StatusFound, "/")
+}
+
 func main() {
 	r := gin.Default()
 	store := cookie.NewStore([]byte("secret"))
@@ -226,9 +279,11 @@ func main() {
 	ConnectDatabase()
 
 	r.GET("/public", public_timeline)
+	r.GET("/", public_timeline)
 	r.GET("/login", login)
 	r.POST("/login", login)
 	r.GET("/register", register)
+	r.POST("/add_message", add_message)
 
 	r.Run()
 }
