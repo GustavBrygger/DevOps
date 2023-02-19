@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/sessions"
@@ -14,6 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/noirbizarre/gonja"
+	"github.com/noirbizarre/gonja/exec"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -175,34 +177,117 @@ func login(c *gin.Context) {
 	//c.HTML(http.StatusOK, "login.html", gin.H{"error": error})
 }
 
+func register_loadPage(c *gin.Context) {
+	var tpl = gonja.Must(gonja.FromFile("template/register.html"))
+
+	req := struct {
+		Endpoint string
+		Username string
+		Email    string
+	}{
+		Endpoint: c.Request.URL.Path,
+	}
+
+	out, err := tpl.Execute(gonja.Context{
+		"request": req,
+		"error":   "",
+	})
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c.Writer.WriteString(out)
+}
+
 func register(c *gin.Context) {
-	password := "secret"
+
+	//fmt.Println(c.PostForm("username"))
+
+	username := c.PostForm("username")
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	password1 := c.PostForm("password2")
 	hash, _ := HashPassword(password)
-	email := "hellohellocom"
-	username := "hello"
+	errorMessage := ""
 
-	stmt, err := DB.Prepare(fmt.Sprintf("INSERT INTO user (username, email, pw_hash) VALUES('%s', '%s', '%s')", username, email, hash))
+	//Check username, email or password is set
+	if username == "" {
+		errorMessage = errorMessage + " - You have to enter a username \n"
+	}
+	if !strings.Contains(email, "@") {
+		errorMessage = errorMessage + " - You have to enter a valid email address \n"
+	}
+	if password == "" {
+		errorMessage = errorMessage + " - You have to enter a password \n"
+	} else {
+		//Check the two passwords are the same!
+		if password != password1 {
+			errorMessage = errorMessage + " - The two passwords do not match \n"
+		}
+	}
+
+	//Check if user is already there
+	existingUser, err := DB.Query("SELECT * FROM user WHERE email = ? ", email)
+	defer existingUser.Close()
+	if existingUser.Next() {
+		errorMessage = errorMessage + " - User was already taken! \n"
+	}
+
+	//If no errors then insert in database
+	if errorMessage == "" {
+		stmt, err := DB.Prepare(fmt.Sprintf("INSERT INTO user (username, email, pw_hash) VALUES('%s', '%s', '%s')", username, email, hash))
+		if err != nil {
+			fmt.Println(err)
+			errorMessage = "err in register"
+		}
+		defer stmt.Close()
+
+		// Execute the insert statement with the desired values
+		result, err := stmt.Exec()
+		if err != nil {
+			fmt.Println(err)
+			errorMessage = "err in register"
+		}
+
+		// Get the ID of the inserted record
+		id, err := result.LastInsertId()
+		if err != nil {
+			fmt.Println(err)
+			errorMessage = "err in register"
+		}
+		fmt.Println("Record inserted with ID:", id)
+	}
+
+	var tpl *exec.Template
+	if errorMessage == "" {
+		//c.Redirect(http.StatusAccepted, "/login") HER SKAL VI SLETTE DEN UNDER OG BARE REDIRECTE NÅR LOGIN ER LAVET
+		tpl = gonja.Must(gonja.FromFile("template/login.html"))
+	} else {
+		tpl = gonja.Must(gonja.FromFile("template/register.html"))
+	}
+
+	req := struct {
+		Endpoint string
+		Username string
+		Email    string
+	}{
+		Endpoint: c.Request.URL.Path,
+		Username: username,
+		Email:    email,
+	}
+
+	//Render HTML
+	out, err := tpl.Execute(gonja.Context{
+		"request": req,
+		"error":   errorMessage,
+	})
+
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer stmt.Close()
-
-	// Execute the insert statement with the desired values
-	result, err := stmt.Exec()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// Get the ID of the inserted record
-	id, err := result.LastInsertId()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println("Record inserted with ID:", id)
+	c.Writer.WriteString(out)
 
 }
 
@@ -228,7 +313,8 @@ func main() {
 	r.GET("/public", public_timeline)
 	r.GET("/login", login)
 	r.POST("/login", login)
-	r.GET("/register", register)
+	r.GET("/register", register_loadPage)
+	r.POST("/register", register)
 
 	r.Run()
 }
