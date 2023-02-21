@@ -31,6 +31,11 @@ func ConnectDatabase() error {
 	return nil
 }
 
+type CookieInfo struct {
+	Username string `json:"username"`
+	UserID   int    `json:"user_id"`
+}
+
 type User struct {
 	User_id  int    `json:"id"`
 	Username string `json:"username"`
@@ -49,13 +54,32 @@ type Message struct {
 	Gravatar       string `json:"gravatar"`
 }
 
+func flashMessage(c *gin.Context, message string) {
+	session := sessions.Default(c)
+	session.AddFlash(message)
+	if err := session.Save(); err != nil {
+		log.Printf("error in flashMessage saving session: %s", err)
+	}
+}
+
 func public_timeline(c *gin.Context) {
-	//var ids []int
 
 	messages := make([]Message, 0)
 	users := make([]User, 0)
 	session := sessions.Default(c)
 	userID := session.Get("user_id")
+	username := session.Get("username")
+
+	cookie_info := CookieInfo{}
+
+	if userID != nil {
+		cookie_info.UserID = userID.(int)
+		cookie_info.Username = username.(string)
+
+	}
+
+	fmt.Println(userID)
+	fmt.Println(username)
 
 	rows, err := DB.Query("SELECT message.*, user.* from message, user where message.flagged = 0 and message.author_id = user.user_id order by message.pub_date desc LIMIT 30")
 
@@ -78,7 +102,6 @@ func public_timeline(c *gin.Context) {
 		}
 		msg.Username = usr.Username
 		msg.Gravatar = geturl(usr.Email)
-		fmt.Println(msg.Gravatar)
 
 		messages = append(messages, msg)
 		users = append(users, usr)
@@ -95,15 +118,18 @@ func public_timeline(c *gin.Context) {
 	}{
 		Endpoint: c.Request.URL.Path,
 	}
+	println(req.Endpoint)
 
 	out, err := tpl.Execute(gonja.Context{
 		"messages":     messages,
-		"g":            session,
+		"g":            cookie_info,
 		"request":      req,
 		"profile_user": usr,
 	})
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	fmt.Println(err)
 	c.Writer.WriteString(out)
 }
 
@@ -135,12 +161,11 @@ func login(c *gin.Context) {
 
 	session := sessions.Default(c)
 	if userID := session.Get("user_id"); userID != nil {
-		fmt.Println("WHAT JHJKHKJ")
-		c.Redirect(http.StatusFound, "/timeline")
+		fmt.Println("already logged in")
+		c.Redirect(http.StatusFound, "/")
 		return
 	}
 
-	fmt.Println(session)
 	var error string
 	usr := User{}
 
@@ -157,18 +182,19 @@ func login(c *gin.Context) {
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 	}
 	if user == nil {
 		fmt.Println("Invalid username")
 	} else if !CheckPasswordHash("secret", usr.Pw_hash) {
 		fmt.Println("Invalid password")
 	} else {
+		fmt.Println("We logged the fuck in")
 		session.Set("flash", "You were logged in")
 		session.Set("user_id", usr.User_id)
+		session.Set("username", usr.Username)
 		session.Save()
-		fmt.Println(":)")
-		c.Redirect(http.StatusFound, "/public")
+		c.Redirect(http.StatusFound, "/")
 		return
 	}
 	//}
@@ -300,6 +326,238 @@ func geturl(email string) string {
 	return url
 }
 
+func add_message(c *gin.Context) {
+	session := sessions.Default(c)
+	if userID := session.Get("user_id"); userID == nil {
+		c.Redirect(http.StatusFound, "/")
+		return
+	}
+
+	cur_date := time.Now().Unix()
+	text := c.PostForm("text")
+	stmt, err := DB.Prepare(fmt.Sprintf("INSERT INTO message (author_id, text, pub_date, flagged) VALUES('%d', '%s', '%d', 0)", session.Get("user_id"), text, cur_date))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer stmt.Close()
+
+	// Execute the insert statement with the desired values
+	result, err := stmt.Exec()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Get the ID of the inserted record
+	id, err := result.LastInsertId()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Record inserted with ID:", id)
+
+	c.Redirect(http.StatusFound, "/")
+}
+
+func follow_user(c *gin.Context){
+	session := sessions.Default(c)
+	if userID := session.Get("user_id"); userID == nil {
+		c.Abort()
+		return
+	}
+
+	username := c.Param("username")
+	profile_user := User{}
+
+	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
+
+	if err != nil{
+		fmt.Println(err)
+	}
+
+	for user.Next() {
+		user.Scan(&profile_user.User_id, &profile_user.Username, &profile_user.Email, &profile_user.Pw_hash)
+		break
+	}
+
+	user.Close()
+
+	stmt, err := DB.Prepare(fmt.Sprintf("INSERT INTO follower (who_id, whom_id) values (%d, %d)", session.Get("user_id"), profile_user.User_id))
+	
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer stmt.Close()
+	
+	// Execute the insert statement with the desired values
+	result, err := stmt.Exec()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(result)
+
+	flashMessage(c, fmt.Sprintf("You are now following %s", profile_user.Username))
+	c.Redirect(http.StatusFound, "/"+profile_user.Username)
+}
+
+func unfollow_user(c *gin.Context){
+	session := sessions.Default(c)
+	if userID := session.Get("user_id"); userID == nil {
+		c.Abort()
+		return
+	}
+
+	username := c.Param("username")
+	profile_user := User{}
+
+	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
+
+	if err != nil{
+		fmt.Println(err)
+	}
+
+	for user.Next() {
+		user.Scan(&profile_user.User_id, &profile_user.Username, &profile_user.Email, &profile_user.Pw_hash)
+		break
+	}
+
+	user.Close()
+
+	stmt, err := DB.Prepare(fmt.Sprintf("DELETE FROM follower WHERE who_id = %d AND whom_id = %d", session.Get("user_id"), profile_user.User_id))
+	
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer stmt.Close()
+	
+	// Execute the insert statement with the desired values
+	result, err := stmt.Exec()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(result)
+
+	flashMessage(c, fmt.Sprintf("You are no longer following %s", profile_user.Username))
+	c.Redirect(http.StatusFound, "/"+ profile_user.Username)
+
+}
+
+func user_timeline(c *gin.Context) {
+	messages := make([]Message, 0)
+	users := make([]User, 0)
+	session := sessions.Default(c)
+	userID := session.Get("user_id")
+	session_username := session.Get("username")
+
+	cookie_info := CookieInfo{}
+
+	// get username
+	username := c.Param("username")
+	profile_user := User{}
+
+
+	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
+	if err != nil {
+		c.Abort()
+		return
+	}
+	
+	for user.Next() {
+		user.Scan(&profile_user.User_id, &profile_user.Username, &profile_user.Email, &profile_user.Pw_hash)
+		break
+	}
+	user.Close()
+
+	followed := struct {
+		Followed bool
+	}{ 
+		Followed: false,
+	}
+
+	if userID := session.Get("user_id"); userID != nil {
+
+		res, err  := DB.Query(`select 1 from follower where
+		follower.who_id = ? and follower.whom_id = ? limit 1`, userID, profile_user.User_id)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+
+		for res.Next() {
+			fmt.Println("We are in the loop guys")
+			res.Scan(&followed.Followed)
+			break
+		}
+		fmt.Println(followed.Followed)
+		res.Close()
+	}
+
+	if userID != nil {
+		cookie_info.UserID = userID.(int)
+		cookie_info.Username = session_username.(string)
+
+	}
+	
+	// get messages
+	rows, err := DB.Query(`select message.*, user.* from message, user where
+	user.user_id = message.author_id and user.user_id = ?
+	order by message.pub_date desc limit 30`, profile_user.User_id)
+
+	for rows.Next() {
+		//var _id int
+		msg := Message{}
+		usr := User{}
+		err := rows.Scan(&msg.Message_id, &msg.Author_id, &msg.Text, &msg.Pub_date, &msg.Flagged, &usr.User_id, &usr.Username, &usr.Email, &usr.Pw_hash)
+
+		str := "Mon, 02 Jan 2006 15:04:05"
+		msg.Formatted_date = time.Unix(int64(msg.Pub_date), 0).Format(str)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		msg.Username = usr.Username
+		msg.Gravatar = geturl(usr.Email)
+
+		messages = append(messages, msg)
+		users = append(users, usr)
+	}
+
+	var tpl = gonja.Must(gonja.FromFile("template/timeline_go.html"))
+
+	req := struct {
+		Endpoint string
+	}{
+		Endpoint: "user_timeline",
+	}
+
+	out, err := tpl.Execute(gonja.Context{
+		"messages":     messages,
+		"g":            cookie_info,
+		"request":      req,
+		"profile_user": profile_user,
+		"followed":     followed,
+		"unfollow_url": "http://"+c.Request.Host+c.Request.URL.Path+"/unfollow",
+		"follow_url": "http://"+c.Request.Host+c.Request.URL.Path+"/follow",
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c.Writer.WriteString(out)
+
+}
+
 func main() {
 	r := gin.Default()
 	store := cookie.NewStore([]byte("secret"))
@@ -311,10 +569,18 @@ func main() {
 	ConnectDatabase()
 
 	r.GET("/public", public_timeline)
+	r.GET("/", public_timeline)
 	r.GET("/login", login)
 	r.POST("/login", login)
+
 	r.GET("/register", register_loadPage)
 	r.POST("/register", register)
+  
+	r.POST("/add_message", add_message)
+	r.GET("/:username", user_timeline)
+
+	r.GET("/:username/follow", follow_user)
+	r.GET("/:username/unfollow", unfollow_user)
 
 	r.Run()
 }
