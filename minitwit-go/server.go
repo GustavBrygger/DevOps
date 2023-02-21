@@ -317,8 +317,8 @@ func follow_user(c *gin.Context){
 
 	fmt.Println(result)
 
-	flashMessage(c, fmt.Sprintf("You are now following %s", username))
-	c.Redirect(http.StatusFound, "/")
+	flashMessage(c, fmt.Sprintf("You are now following %s", profile_user.Username))
+	c.Redirect(http.StatusFound, "/"+profile_user.Username)
 }
 
 func unfollow_user(c *gin.Context){
@@ -362,11 +362,11 @@ func unfollow_user(c *gin.Context){
 
 	fmt.Println(result)
 
-	flashMessage(c, fmt.Sprintf("You are no longer following %s", username))
-	c.Redirect(http.StatusFound, "/")
+	flashMessage(c, fmt.Sprintf("You are no longer following %s", profile_user.Username))
+	c.Redirect(http.StatusFound, "/"+ profile_user.Username)
 
 }
-/*
+
 func user_timeline(c *gin.Context) {
 	messages := make([]Message, 0)
 	users := make([]User, 0)
@@ -402,7 +402,7 @@ func user_timeline(c *gin.Context) {
 	if userID := session.Get("user_id"); userID != nil {
 
 		res, err  := DB.Query(`select 1 from follower where
-		follower.who_id = ? and follower.whom_id = ?`, userID, profile_user.Username)
+		follower.who_id = ? and follower.whom_id = ? limit 1`, userID, profile_user.User_id)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -410,9 +410,11 @@ func user_timeline(c *gin.Context) {
 
 
 		for res.Next() {
+			fmt.Println("We are in the loop guys")
 			res.Scan(&followed.Followed)
 			break
 		}
+		fmt.Println(followed.Followed)
 		res.Close()
 	}
 
@@ -460,6 +462,8 @@ func user_timeline(c *gin.Context) {
 		"request":      req,
 		"profile_user": profile_user,
 		"followed":     followed,
+		"unfollow_url": "http://"+c.Request.Host+c.Request.URL.Path+"/unfollow",
+		"follow_url": "http://"+c.Request.Host+c.Request.URL.Path+"/follow",
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -467,7 +471,7 @@ func user_timeline(c *gin.Context) {
 
 	c.Writer.WriteString(out)
 
-}*/
+}
 
 func main() {
 	r := gin.Default()
@@ -485,7 +489,7 @@ func main() {
 	r.POST("/login", login)
 	r.GET("/register", register)
 	r.POST("/add_message", add_message)
-	//r.GET("/:username", user_timeline)
+	r.GET("/:username", user_timeline)
 
 	r.GET("/:username/follow", follow_user)
 	r.GET("/:username/unfollow", unfollow_user)
