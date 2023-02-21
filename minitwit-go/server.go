@@ -368,29 +368,64 @@ func unfollow_user(c *gin.Context){
 }
 /*
 func user_timeline(c *gin.Context) {
+	messages := make([]Message, 0)
+	users := make([]User, 0)
 	session := sessions.Default(c)
-	if userID := session.Get("user_id"); userID == nil {
-		c.Abort()
-		return
-	}
+	userID := session.Get("user_id")
+	session_username := session.Get("username")
+
+	cookie_info := CookieInfo{}
 
 	// get username
 	username := c.Param("username")
 	profile_user := User{}
 
+
 	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
-
-	defer user.Close()
-
+	if err != nil {
+		c.Abort()
+		return
+	}
+	
 	for user.Next() {
 		user.Scan(&profile_user.User_id, &profile_user.Username, &profile_user.Email, &profile_user.Pw_hash)
 		break
 	}
+	user.Close()
 
+	followed := struct {
+		Followed bool
+	}{ 
+		Followed: false,
+	}
+
+	if userID := session.Get("user_id"); userID != nil {
+
+		res, err  := DB.Query(`select 1 from follower where
+		follower.who_id = ? and follower.whom_id = ?`, userID, profile_user.Username)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+
+		for res.Next() {
+			res.Scan(&followed.Followed)
+			break
+		}
+		res.Close()
+	}
+
+	if userID != nil {
+		cookie_info.UserID = userID.(int)
+		cookie_info.Username = session_username.(string)
+
+	}
+	
 	// get messages
 	rows, err := DB.Query(`select message.*, user.* from message, user where
 	user.user_id = message.author_id and user.user_id = ?
-	order by message.pub_date desc limit 30`, userID)
+	order by message.pub_date desc limit 30`, profile_user.User_id)
 
 	for rows.Next() {
 		//var _id int
@@ -416,9 +451,8 @@ func user_timeline(c *gin.Context) {
 	req := struct {
 		Endpoint string
 	}{
-		Endpoint: c.Request.URL.Path,
+		Endpoint: "user_timeline",
 	}
-	println(req.Endpoint)
 
 	out, err := tpl.Execute(gonja.Context{
 		"messages":     messages,
