@@ -268,6 +268,74 @@ func add_message(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/")
 }
 
+func user_timeline(c *gin.Context) {
+	session := sessions.Default(c)
+	if userID := session.Get("user_id"); userID == nil {
+		c.Abort(http.StatusNotFound)
+		return
+	}
+
+	// get username
+	username := c.Param("username")
+	profile_user := User{}
+
+	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
+
+	defer user.Close()
+
+	for user.Next() {
+		user.Scan(&profile_user.User_id, &profile_user.Username, &profile_user.Email, &profile_user.Pw_hash)
+		break
+	}
+
+	// get messages
+	rows, err := DB.Query(`select message.*, user.* from message, user where
+	user.user_id = message.author_id and user.user_id = ?
+	order by message.pub_date desc limit 30`, userID)
+
+	for rows.Next() {
+		//var _id int
+		msg := Message{}
+		usr := User{}
+		err := rows.Scan(&msg.Message_id, &msg.Author_id, &msg.Text, &msg.Pub_date, &msg.Flagged, &usr.User_id, &usr.Username, &usr.Email, &usr.Pw_hash)
+
+		str := "Mon, 02 Jan 2006 15:04:05"
+		msg.Formatted_date = time.Unix(int64(msg.Pub_date), 0).Format(str)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		msg.Username = usr.Username
+		msg.Gravatar = geturl(usr.Email)
+
+		messages = append(messages, msg)
+		users = append(users, usr)
+	}
+
+	var tpl = gonja.Must(gonja.FromFile("template/timeline_go.html"))
+
+	req := struct {
+		Endpoint string
+	}{
+		Endpoint: c.Request.URL.Path,
+	}
+	println(req.Endpoint)
+
+	out, err := tpl.Execute(gonja.Context{
+		"messages":     messages,
+		"g":            cookie_info,
+		"request":      req,
+		"profile_user": profile_user,
+		"followed":     followed,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	c.Writer.WriteString(out)
+
+}
+
 func main() {
 	r := gin.Default()
 	store := cookie.NewStore([]byte("secret"))
@@ -284,6 +352,6 @@ func main() {
 	r.POST("/login", login)
 	r.GET("/register", register)
 	r.POST("/add_message", add_message)
-
+	r.GET("/:username", user_timeline)
 	r.Run()
 }
