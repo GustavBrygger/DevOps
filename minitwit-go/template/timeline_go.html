@@ -25,7 +25,7 @@ My Timeline
     <div class=followstatus>
     {% if g.UserID == profile_user.User_id %}
       This is you!
-    {% elif followed %}
+    {% elif followed.Followed %}
       You are currently following this user.
       <a class=unfollow>Unfollow user</a>.
     {% else %}
