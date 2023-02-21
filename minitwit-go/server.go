@@ -52,6 +52,14 @@ type Message struct {
 	Gravatar       string `json:"gravatar"`
 }
 
+func flashMessage(c *gin.Context, message string) {
+	session := sessions.Default(c)
+	session.AddFlash(message)
+	if err := session.Save(); err != nil {
+		log.Printf("error in flashMessage saving session: %s", err)
+	}
+}
+
 func public_timeline(c *gin.Context) {
 
 	messages := make([]Message, 0)
@@ -268,6 +276,97 @@ func add_message(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/")
 }
 
+func follow_user(c *gin.Context){
+	session := sessions.Default(c)
+	if userID := session.Get("user_id"); userID == nil {
+		c.Abort()
+		return
+	}
+
+	username := c.Param("username")
+	profile_user := User{}
+
+	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
+
+	if err != nil{
+		fmt.Println(err)
+	}
+
+	for user.Next() {
+		user.Scan(&profile_user.User_id, &profile_user.Username, &profile_user.Email, &profile_user.Pw_hash)
+		break
+	}
+
+	user.Close()
+
+	stmt, err := DB.Prepare(fmt.Sprintf("INSERT INTO follower (who_id, whom_id) values (%d, %d)", session.Get("user_id"), profile_user.User_id))
+	
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer stmt.Close()
+	
+	// Execute the insert statement with the desired values
+	result, err := stmt.Exec()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(result)
+
+	flashMessage(c, fmt.Sprintf("You are now following %s", username))
+	c.Redirect(http.StatusFound, "/")
+}
+
+func unfollow_user(c *gin.Context){
+	session := sessions.Default(c)
+	if userID := session.Get("user_id"); userID == nil {
+		c.Abort()
+		return
+	}
+
+	username := c.Param("username")
+	profile_user := User{}
+
+	user, err := DB.Query("SELECT * FROM user WHERE username = ? LIMIT 1", username)
+
+	if err != nil{
+		fmt.Println(err)
+	}
+
+	for user.Next() {
+		user.Scan(&profile_user.User_id, &profile_user.Username, &profile_user.Email, &profile_user.Pw_hash)
+		break
+	}
+
+	user.Close()
+
+	stmt, err := DB.Prepare(fmt.Sprintf("DELETE FROM follower WHERE who_id = %d AND whom_id = %d", session.Get("user_id"), profile_user.User_id))
+	
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer stmt.Close()
+	
+	// Execute the insert statement with the desired values
+	result, err := stmt.Exec()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(result)
+
+	flashMessage(c, fmt.Sprintf("You are no longer following %s", username))
+	c.Redirect(http.StatusFound, "/")
+
+}
+/*
 func user_timeline(c *gin.Context) {
 	messages := make([]Message, 0)
 	users := make([]User, 0)
@@ -368,7 +467,7 @@ func user_timeline(c *gin.Context) {
 
 	c.Writer.WriteString(out)
 
-}
+}*/
 
 func main() {
 	r := gin.Default()
@@ -386,6 +485,10 @@ func main() {
 	r.POST("/login", login)
 	r.GET("/register", register)
 	r.POST("/add_message", add_message)
-	r.GET("/:username", user_timeline)
+	//r.GET("/:username", user_timeline)
+
+	r.GET("/:username/follow", follow_user)
+	r.GET("/:username/unfollow", unfollow_user)
+
 	r.Run()
 }
