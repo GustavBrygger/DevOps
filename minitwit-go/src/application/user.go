@@ -26,6 +26,16 @@ func GetUserByID(db *gorm.DB, userID uint) (User, error) {
 	return user, nil
 }
 
+func GetFirstNFollowersToUserid(db *gorm.DB, userID uint, limit uint) ([]*User, error) {
+	var user User
+	result := db.Find(&user, userID)
+	if result.Error != nil {
+		return nil, errors.New("User not found")
+	}
+
+	return user.Followers[:limit], nil
+}
+
 func GetUserByUsername(db *gorm.DB, username string) (User, error) {
 	user := User{Username: username}
 	result := db.Where("Username = ?", username).Find(&user)

@@ -70,7 +70,7 @@ func postMessageAsUser(context *gin.Context) {
 }
 
 func getLatest(context *gin.Context) {
-	latest_json, _:= json.Marshal(latest)
+	latest_json, _ := json.Marshal(latest)
 	context.Writer.Write(latest_json)
 }
 
