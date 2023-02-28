@@ -3,30 +3,27 @@ package main
 import (
 	"go-minitwit/src/persistence"
 	"go-minitwit/src/web"
+	"log"
 
+	"github.com/caarlos0/env/v6"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
-
-type Config struct {
-	DbServer   string `env:"ENVIRONMENT,required"`
-	DbPort     string `env:"ENVIRONMENT,required"`
-	DbName     string `env:"ENVIRONMENT,required"`
-	DbUser     string `env:"ENVIRONMENT,required"`
-	DbPassword string `env:"ENVIRONMENT,required"`
-}
 
 func main() {
 	router := gin.Default()
-
-	config := Config{}
-	err = env.Parse(&cfg) // 👈 Parse environment variables into `Config`
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("unable to parse ennvironment variables: %e", err)
+		log.Fatal(err)
 	}
 
-	println(config.DbServer)
-	persistence.ConfigurePersistence()
-	web.ConfigureWeb(router)
+	config := persistence.Config{}
+	err = env.Parse(&config)
+	if err != nil {
+		log.Fatal("unable to parse ennvironment variables: %e", err)
+	}
 
+	persistence.ConfigurePersistence(config)
+	web.ConfigureWeb(router)
 	router.Run()
 }
