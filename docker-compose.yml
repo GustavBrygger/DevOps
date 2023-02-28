@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  db:
+    container_name: minitwit_db
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+      
+  server:
+      container_name: minitwit
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "8080:8080"
+      restart: always
+      links:
+        - db:database
+      depends_on:
+        - db
+      volumes:
+        - ./:/app
+
+volumes:
+    db:
+      driver: local
+    server:
+      external: false
