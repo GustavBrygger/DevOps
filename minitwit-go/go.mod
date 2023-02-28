@@ -9,6 +9,8 @@ require (
 	gorm.io/gorm v1.24.5
 )
 
+require golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb // indirect
+
 require (
 	github.com/gin-contrib/sessions v0.0.5 // direct
 	github.com/gin-contrib/sse v0.1.0 // indirect
