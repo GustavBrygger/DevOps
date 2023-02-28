@@ -19,12 +19,12 @@ func MapJSONFollowersEndpoints(router *gin.Engine) {
 func jsonfollowUser(context *gin.Context) {
 	updateLatest(context.Request)
 
-	context.JSON(204, map[string]interface{}{"Hello": "Gusatv"})
-
-	userID := abortIfNoUserID(context)
-	if userID == 0 {
-		context.AbortWithStatus(404)
+	userName := context.Param("username")
+	user, err := application.GetUserByUsername(persistence.GetDbConnection(), userName)
+	if err != nil {
+		context.AbortWithError(http.StatusInternalServerError, err)
 	}
+	userID := user.ID
 
 	//Read body and convert form byteArray => string  => JSON
 	bodyBites, err := ioutil.ReadAll(context.Request.Body)
@@ -58,10 +58,12 @@ func jsonGetFollowersToUser(context *gin.Context) {
 
 	db := persistence.GetDbConnection()
 
-	userID := abortIfNoUserID(context)
-	if userID == 0 {
-		context.AbortWithStatus(404)
+	userName := context.Param("username")
+	user, err := application.GetUserByUsername(persistence.GetDbConnection(), userName)
+	if err != nil {
+		context.AbortWithError(http.StatusInternalServerError, err)
 	}
+	userID := user.ID
 
 	limitToQuery := context.Request.URL.Query().Get("no")
 	limitToQueryInt, _ := strconv.Atoi(limitToQuery)
@@ -74,8 +76,9 @@ func jsonGetFollowersToUser(context *gin.Context) {
 	userNameListToReturn := []string{}
 	for _, user := range users {
 		userNameListToReturn = append(userNameListToReturn, user.Username)
+		println(user.Username)
 	}
 
-	usernames, err := json.Marshal(userNameListToReturn)
+	usernames, err := json.Marshal(map[string]interface{}{"follows": userNameListToReturn})
 	context.Writer.Write(usernames)
 }
