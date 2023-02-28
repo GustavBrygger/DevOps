@@ -47,7 +47,7 @@ def test_latest():
 
 
 def test_register():
-    username = 'a'
+    username = 'al'
     email = 'a@a.a'
     pwd = 'a'
     data = {'username': username, 'email': email, 'pwd': pwd}
@@ -195,7 +195,13 @@ def test_a_unfollows_b():
     response = requests.get(f'{BASE_URL}/latest', headers=HEADERS)
     assert response.json()['latest'] == 11
 
+# test_latest()
 # test_register()
 # test_create_msg()
 # test_get_latest_user_msgs()
 # test_get_latest_msgs()
+# test_register_b()
+# test_register_c()
+test_follow_user()
+# test_a_unfollows_b()
+

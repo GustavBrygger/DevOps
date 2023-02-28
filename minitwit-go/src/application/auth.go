@@ -12,7 +12,7 @@ import (
 
 type Register struct {
 	Username  string `json:"username" form:"username" binding:"required,min=1"`
-	Email     string `json:"email" form:"email" binding:"required,email"`
+	Email     string `json:"email" form:"email" binding:"required,min=1"`
 	Password  string `json:"pwd" form:"pwd" binding:"required,min=1"`
 	Password2 string `form:"password2"`
 }

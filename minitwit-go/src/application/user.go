@@ -32,8 +32,13 @@ func GetFirstNFollowersToUserid(db *gorm.DB, userID uint, limit uint) ([]*User, 
 	if result.Error != nil {
 		return nil, errors.New("User not found")
 	}
+	fllwsLen := len(user.Followers)
 
-	return user.Followers[:limit], nil
+	if fllwsLen > int(limit) {
+		return user.Followers[:limit], nil
+	}
+
+	return user.Followers, nil
 }
 
 func GetUserByUsername(db *gorm.DB, username string) (User, error) {
