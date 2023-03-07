@@ -21,6 +21,7 @@ func GetDbConnection() *gorm.DB {
 	if isProduction == "TRUE" {
 		connString = azureConnectionString
 	}
+
 	println(connString)
 	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
