@@ -59,9 +59,9 @@ func FollowUser(db *gorm.DB, currUserID uint, usernameToFollow string) error {
 		return err
 	}
 
-	currUser.Followers = append(currUser.Followers, &userToFollow)
+	userToFollow.Followers = append(userToFollow.Followers, &currUser)
 
-	db.Save(&currUser)
+	db.Save(&userToFollow)
 	return nil
 }
 
@@ -71,7 +71,7 @@ func UnfollowUser(db *gorm.DB, currUserID uint, usernameToUnFollow string) error
 		return err
 	}
 
-	db.Unscoped().Exec("DELETE from user_followers WHERE user_id =" + strconv.Itoa(int(currUserID)) + " AND follower_id = " + strconv.Itoa(int(userToUnFollow.ID)))
+	db.Unscoped().Exec("DELETE from user_followers WHERE user_id =" + strconv.Itoa(int(userToUnFollow.ID)) + " AND follower_id = " + strconv.Itoa(int(currUserID)))
 	return nil
 }
 
