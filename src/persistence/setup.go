@@ -7,7 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
+var db *gorm.DB
+
 func GetDbConnection() *gorm.DB {
+
+	return db
+}
+
+func InitDbConnection() *gorm.DB {
 	dsn := "host=minitwit_db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -17,8 +24,9 @@ func GetDbConnection() *gorm.DB {
 	return db
 }
 
+
 func ConfigurePersistence() {
-	db := GetDbConnection()
+	db = InitDbConnection()
 
 	applyMigrations(db)
 	seed(db)
