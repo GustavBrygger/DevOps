@@ -16,10 +16,13 @@ func seed(db *gorm.DB) {
 }
 
 func addUsersAndMessages(db *gorm.DB) {
+	hash := util.HashPassword("Test")
+	db.Exec("INSERT INTO users (id, username, email, pw_hash) VALUES (0, 'Tester', 'tester@gmail.com',' " + hash + "');")
+
 	user1 := application.User{
-		Username: "Tester",
-		Email:    "tester@gmail.com",
-		PW_hash:  util.HashPassword("Test"),
+		Username: "AndenTester",
+		Email:    "andentester@gmail.com",
+		PW_hash:  util.HashPassword("AndenTest"),
 		Messages: []*application.Message{
 			{Text: "In Japan"},
 		},

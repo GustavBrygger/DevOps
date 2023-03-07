@@ -57,7 +57,7 @@ func jsonfollowUser(context *gin.Context) {
 			context.AbortWithError(http.StatusUnauthorized, errs)
 		}
 	}
-
+	context.Status(http.StatusNoContent)
 }
 
 func jsonGetFollowersToUser(context *gin.Context) {
