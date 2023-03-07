@@ -3,6 +3,7 @@ package persistence
 import (
 	"fmt"
 	"go-minitwit/src/application"
+	"os"
 
 	"log"
 
@@ -10,17 +11,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type Config struct {
-	DbServer   string `env:"DBSERVER,required"`
-	DbPort     int    `env:"DBPORT,required"`
-	DbName     string `env:"DBNAME,required"`
-	DbUser     string `env:"DBUSER,required"`
-	DbPassword string `env:"DBPASSWORD,required"`
-}
-
-var connString = ""
+var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s port=%d dbname=%s", "localhost", "postgres", "postgres", 5432, "postgres")
+var azureConnectionString = fmt.Sprintf("host=%s user=%s password=%s port=%d dbname=%s",
+	"minitwit-db.database.windows.net", "minitwit", "dbpassworD1!", 1433, "minitwit-db")
 
 func GetDbConnection() *gorm.DB {
+	connString := localConnectionString
+	isProduction := os.Getenv("IS_PRODUCTION")
+	if isProduction == "TRUE" {
+		connString = azureConnectionString
+	}
 	println(connString)
 	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
 	if err != nil {
@@ -30,10 +30,8 @@ func GetDbConnection() *gorm.DB {
 	return db
 }
 
-func ConfigurePersistence(config Config) {
-	connString = fmt.Sprintf("host=%s user=%s password=%s port=%d dbname=%s",
-		config.DbServer, config.DbUser, config.DbPassword, config.DbPort, config.DbName)
-	println(connString)
+func ConfigurePersistence() {
+	println(localConnectionString)
 	db := GetDbConnection()
 
 	applyMigrations(db)
