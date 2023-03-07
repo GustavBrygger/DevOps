@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 services:
   db:
     container_name: minitwit_db
@@ -14,9 +14,7 @@ services:
       
   server:
       container_name: minitwit
-      build:
-        context: .
-        dockerfile: Dockerfile-minitwit
+      image: ${DOCKER_USERNAME}/minitwitimage
       ports:
         - "8080:8080"
       restart: always
