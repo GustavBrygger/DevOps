@@ -11,7 +11,13 @@ require (
 	gorm.io/gorm v1.24.5
 )
 
-require github.com/google/go-cmp v0.5.8 // indirect
+require (
+	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
+	github.com/golang-sql/sqlexp v0.1.0 // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/microsoft/go-mssqldb v0.19.0 // indirect
+	gorm.io/driver/sqlserver v1.4.2 // indirect
+)
 
 require (
 	github.com/gin-contrib/sessions v0.0.5 // direct
