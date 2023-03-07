@@ -5,7 +5,7 @@
 ITU Minitwit application rewritten in GO with the Gin library.
 <br/>
 
-## ⚡️ Quickstart (test)
+## ⚡️ Quickstart
 
 ```sh
 cd minitwit-go
