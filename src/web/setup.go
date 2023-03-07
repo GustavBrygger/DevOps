@@ -21,4 +21,5 @@ func mapEndpoints(router *gin.Engine) {
 	controller.MapMessageEndpoints(router)
 	controller.MapJSONMessageEndpoints(router)
 	controller.MapJSONAuthEndpoints(router)
+	controller.MapJSONFollowersEndpoints(router)
 }

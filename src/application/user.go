@@ -26,6 +26,22 @@ func GetUserByID(db *gorm.DB, userID uint) (User, error) {
 	return user, nil
 }
 
+func GetFirstNFollowersToUserid(db *gorm.DB, userID uint, limit uint) ([]*User, error) {
+	var user User
+	result := db.Preload("Followers").Find(&user, userID)
+	if result.Error != nil {
+		return nil, errors.New("User not found")
+	}
+
+	fllwsLen := len(user.Followers)
+
+	if fllwsLen > int(limit) {
+		return user.Followers[:limit], nil
+	}
+
+	return user.Followers, nil
+}
+
 func GetUserByUsername(db *gorm.DB, username string) (User, error) {
 	user := User{Username: username}
 	result := db.Where("Username = ?", username).Find(&user)
@@ -43,8 +59,9 @@ func FollowUser(db *gorm.DB, currUserID uint, usernameToFollow string) error {
 		return err
 	}
 
-	userToFollow.Followers = append(userToFollow.Followers, &currUser)
-	db.Save(&userToFollow)
+	currUser.Followers = append(currUser.Followers, &userToFollow)
+
+	db.Save(&currUser)
 	return nil
 }
 
@@ -54,7 +71,7 @@ func UnfollowUser(db *gorm.DB, currUserID uint, usernameToUnFollow string) error
 		return err
 	}
 
-	db.Unscoped().Exec("DELETE from user_followers WHERE user_id =" + strconv.Itoa(int(userToUnFollow.ID)) + " AND follower_id = " + strconv.Itoa(int(currUserID)))
+	db.Unscoped().Exec("DELETE from user_followers WHERE user_id =" + strconv.Itoa(int(currUserID)) + " AND follower_id = " + strconv.Itoa(int(userToUnFollow.ID)))
 	return nil
 }
 
