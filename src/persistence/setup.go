@@ -22,7 +22,6 @@ func GetDbConnection() *gorm.DB {
 	isProduction := os.Getenv("IS_PRODUCTION")
 	if isProduction == "TRUE" {
 		dbPassword := os.Getenv("DB_PASSWORD")
-		println(getAzureConnString(dbPassword))
 		db, err := gorm.Open(sqlserver.Open(getAzureConnString(dbPassword)), &gorm.Config{})
 		if err != nil {
 			log.Fatal("Failed to connect to database")
