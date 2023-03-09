@@ -16,8 +16,7 @@ func seed(db *gorm.DB) {
 }
 
 func addUsersAndMessages(db *gorm.DB) {
-	hash := '$2a$14$o0RLqWDxXvMAvcTrKqYVbuF4JcTT5i8tS2b8nzSN4u.UP5odFsFdG'
-	db.Exec("INSERT INTO users (id, username, email, pw_hash) VALUES (0, 'Roger Histand', 'Roger+Histand@hotmail.com',' " + hash + "');")
+	db.Exec("INSERT INTO users (id, username, email, pw_hash) VALUES (0, "Roger Histand", "Roger+Histand@hotmail.com", "$2a$14$o0RLqWDxXvMAvcTrKqYVbuF4JcTT5i8tS2b8nzSN4u.UP5odFsFdG");")
 
 	user1 := application.User{
 		Username: "AndenTester",
