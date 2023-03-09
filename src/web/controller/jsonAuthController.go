@@ -17,4 +17,5 @@ func registerUser(context *gin.Context){
 		context.AbortWithError(http.StatusInternalServerError, err)
 	}
 	updateLatest(context.Request)
+	context.Status(http.StatusNoContent)
 }

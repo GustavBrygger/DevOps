@@ -19,12 +19,7 @@ func MapJSONFollowersEndpoints(router *gin.Engine) {
 func jsonfollowUser(context *gin.Context) {
 	updateLatest(context.Request)
 
-	userName := context.Param("username")
-	user, err := application.GetUserByUsername(persistence.GetDbConnection(), userName)
-	if err != nil {
-		context.AbortWithError(http.StatusInternalServerError, err)
-	}
-	userID := user.ID
+	userNameToFollow := context.Param("username")
 
 	//Read body and convert form byteArray => string  => JSON
 	bodyBites, err := ioutil.ReadAll(context.Request.Body)
@@ -40,17 +35,29 @@ func jsonfollowUser(context *gin.Context) {
 	unfollowUsername, _ := bodyJson["unfollow"]
 
 	if isFollowInBody {
-		err := application.FollowUser(persistence.GetDbConnection(), userID, followUsername.(string))
+		user, err := application.GetUserByUsername(persistence.GetDbConnection(), followUsername.(string))
 		if err != nil {
-			context.AbortWithError(http.StatusUnauthorized, err)
+			context.AbortWithError(http.StatusInternalServerError, err)
+		}
+		userID := user.ID
+
+		errs := application.FollowUser(persistence.GetDbConnection(), userID, userNameToFollow)
+		if errs != nil {
+			context.AbortWithError(http.StatusUnauthorized, errs)
 		}
 	} else {
-		err := application.UnfollowUser(persistence.GetDbConnection(), userID, unfollowUsername.(string))
+		user, err := application.GetUserByUsername(persistence.GetDbConnection(), unfollowUsername.(string))
 		if err != nil {
-			context.AbortWithError(http.StatusUnauthorized, err)
+			context.AbortWithError(http.StatusInternalServerError, err)
+		}
+		userID := user.ID
+
+		errs := application.UnfollowUser(persistence.GetDbConnection(), userID, userNameToFollow)
+		if errs != nil {
+			context.AbortWithError(http.StatusUnauthorized, errs)
 		}
 	}
-
+	context.Status(http.StatusNoContent)
 }
 
 func jsonGetFollowersToUser(context *gin.Context) {
