@@ -74,7 +74,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           source: "./remote_files/docker_compose.yml"
-          target: "~/"  
+          target: "."  
           overwrite: true
           strip_components: 1
 
