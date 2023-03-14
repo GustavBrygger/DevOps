@@ -69,11 +69,10 @@ jobs:
       
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
-        env:
+        with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-        with:
           source: "remote_files/docker_compose.yml"
           target: "~/"  
           overwrite: true
