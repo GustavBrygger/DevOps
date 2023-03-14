@@ -1,25 +1,25 @@
 {{ define "title" }}
 <!doctype html>
-<title>  Welcome | MiniTwit</title>
+<title> Welcome | MiniTwit</title>
 <link rel=stylesheet type=text/css href="/web/static/style.css">
 <div class=page>
   <h1>MiniTwit</h1>
   <div class=navigation>
-  {{ if .User }}
-    <a href="http://localhost:8080/">My timeline</a> |
-    <a href="http://localhost:8080/public">Public timeline</a> |
-    <a href="http://localhost:8080/logout">Sign out [{{ .User.Username }}]</a>
-  {{ else }}
-    <a href="http://localhost:8080/public">Public timeline</a> |
-    <a href="http://localhost:8080/register-user">Sign up</a> |
-    <a href="http://localhost:8080/login">Sign in</a>
-  {{ end }}
+    {{ if .User }}
+    <a href="/">My timeline</a> |
+    <a href="/public">Public timeline</a> |
+    <a href="/logout">Sign out [{{ .User.Username }}]</a>
+    {{ else }}
+    <a href="/public">Public timeline</a> |
+    <a href="/register-user">Sign up</a> |
+    <a href="/login">Sign in</a>
+    {{ end }}
   </div>
   {{ end }}
   <div class=body>
     {{ define "body" }} {{ end }}
   </div>
-{{ define "footer" }}
+  {{ define "footer" }}
   <div class=footer>
     MiniTwit &mdash; A Go Application
   </div>

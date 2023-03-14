@@ -31,7 +31,7 @@ func GetAllMessages(db *gorm.DB) []MessageDTO {
 
 func GetFirstNMessages(db *gorm.DB, n int) []MessageDTO {
 	var messages []Message
-	db.Limit(n).Where(&Message{flagged: false}).Find(&messages)
+	db.Limit(n).Where(&Message{flagged: false}).Order("created_at desc").Find(&messages)
 
 	return toMessageDTO(db, messages)
 }

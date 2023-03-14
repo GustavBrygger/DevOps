@@ -1,36 +1,46 @@
 package persistence
 
 import (
-	"fmt"
+	// "fmt"
 	"go-minitwit/src/application"
-	"os"
+	// "os"
 
 	"log"
 
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlserver"
+	// "gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
-var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s port=%d dbname=%s", "localhost", "postgres", "postgres", 5432, "postgres")
-
-func getAzureConnString(dbPassword string) string {
-	return fmt.Sprintf("sqlserver://%s:%s@minitwit-db.database.windows.net:1433?database=minitwit-db", "minitwit", dbPassword)
-}
+var db *gorm.DB
 
 func GetDbConnection() *gorm.DB {
-	isProduction := os.Getenv("IS_PRODUCTION")
-	if isProduction == "TRUE" {
-		dbPassword := os.Getenv("DB_PASSWORD")
-		db, err := gorm.Open(sqlserver.Open(getAzureConnString(dbPassword)), &gorm.Config{})
-		if err != nil {
-			log.Fatal("Failed to connect to database")
-		}
 
-		return db
-	}
+	return db
+}
 
-	db, err := gorm.Open(postgres.Open(localConnectionString), &gorm.Config{})
+func InitDbConnection() *gorm.DB {
+	dsn := "host=minitwit_db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+// var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s port=%d dbname=%s", "localhost", "postgres", "postgres", 5432, "postgres")
+
+// func getAzureConnString(dbPassword string) string {
+// 	return fmt.Sprintf("sqlserver://%s:%s@minitwit-db.database.windows.net:1433?database=minitwit-db", "minitwit", dbPassword)
+// }
+
+// func GetDbConnection() *gorm.DB {
+// 	isProduction := os.Getenv("IS_PRODUCTION")
+// 	if isProduction == "TRUE" {
+// 		dbPassword := os.Getenv("DB_PASSWORD")
+// 		db, err := gorm.Open(sqlserver.Open(getAzureConnString(dbPassword)), &gorm.Config{})
+// 		if err != nil {
+// 			log.Fatal("Failed to connect to database")
+// 		}
+
+// 		return db
+// 	}
+
+// 	db, err := gorm.Open(postgres.Open(localConnectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database")
 	}
@@ -38,8 +48,9 @@ func GetDbConnection() *gorm.DB {
 	return db
 }
 
+
 func ConfigurePersistence() {
-	db := GetDbConnection()
+	db = InitDbConnection()
 
 	applyMigrations(db)
 	seed(db)
