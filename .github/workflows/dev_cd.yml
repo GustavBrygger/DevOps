@@ -76,6 +76,7 @@ jobs:
           source: "./remote_files/docker_compose.yml"
           target: "~/"  
           overwrite: true
+          strip_components: 1
 
       - name: Configure SSH
         run: |
