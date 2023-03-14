@@ -9,8 +9,8 @@ import (
 
 func main() {
 	router := gin.Default()
+
 	persistence.ConfigurePersistence()
 	web.ConfigureWeb(router)
-
 	router.Run()
 }

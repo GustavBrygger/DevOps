@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - main
+
+
+name: Deploy-To-Azure
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+        - name: 'Checkout GitHub Action'
+          uses: actions/checkout@main
+          
+        - name: 'Login via Azure CLI'
+          uses: azure/actions/login@v1
+          with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+        - name: 'Build and push image'
+          uses: azure/docker-login@v1
+          with:
+            login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+            username: ${{ secrets.REGISTRY_USERNAME }}
+            password: ${{ secrets.REGISTRY_PASSWORD }}
+        - run: |
+            docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/minitwit:${{ github.sha }}
+            docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/minitwit:${{ github.sha }}
+        
+        - name: 'Deploy to Azure Web App'
+          uses: azure/webapps-deploy@v2
+          with:
+            app-name: 'minitwiit'
+            images: ${{ secrets.REGISTRY_LOGIN_SERVER }}/minitwit:${{ github.sha }}
+        
+        - name: Azure logout
+          run: |
+            az logout
