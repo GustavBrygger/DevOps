@@ -25,10 +25,10 @@ func GetDbConnection() *gorm.DB {
 		return db
 	}
 
-	return initDBConnection()
+	return initDbConnection()
 }
 
-func initDBConnection() *gorm.DB {
+func initDbConnection() *gorm.DB {
 	isProduction := os.Getenv("IS_PRODUCTION")
 	if isProduction == "TRUE" {
 		dbPassword := os.Getenv("DB_PASSWORD")
@@ -49,7 +49,7 @@ func initDBConnection() *gorm.DB {
 }
 
 func ConfigurePersistence() {
-	db = initDBConnection()
+	db = initDbConnection()
 
 	applyMigrations(db)
 	seed(db)
