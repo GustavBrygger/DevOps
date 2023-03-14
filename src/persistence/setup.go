@@ -12,18 +12,23 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB = nil
 var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "minitwit_db", "postgres", "postgres", "postgres", 5432)
 
 func getAzureConnString(dbPassword string) string {
 	return fmt.Sprintf("sqlserver://%s:%s@minitwit-db.database.windows.net:1433?database=minitwit-db", "minitwit", dbPassword)
 }
 
+var db *gorm.DB = nil
+
 func GetDbConnection() *gorm.DB {
 	if db != nil {
 		return db
 	}
 
+	return initDBConnection()
+}
+
+func initDBConnection() *gorm.DB {
 	isProduction := os.Getenv("IS_PRODUCTION")
 	if isProduction == "TRUE" {
 		dbPassword := os.Getenv("DB_PASSWORD")
@@ -32,8 +37,7 @@ func GetDbConnection() *gorm.DB {
 			log.Fatal("Failed to connect to database")
 		}
 
-		db = azureConn
-		return db
+		return azureConn
 	}
 
 	localConn, err := gorm.Open(postgres.Open(localConnectionString), &gorm.Config{})
@@ -41,12 +45,11 @@ func GetDbConnection() *gorm.DB {
 		log.Fatal("Failed to connect to database")
 	}
 
-	db = localConn
 	return localConn
 }
 
 func ConfigurePersistence() {
-	db = GetDbConnection()
+	db = initDBConnection()
 
 	applyMigrations(db)
 	seed(db)
