@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/shirou/gopsutil/v3/mem"
 )
 
 var CPU_LOAD = prometheus.NewGauge(prometheus.GaugeOpts{
@@ -18,21 +20,39 @@ var RESPONSE_COUNTER = prometheus.NewCounter(prometheus.CounterOpts{
 })
 
 var REQUEST_DURATION_SUMMARY = prometheus.NewHistogram(prometheus.HistogramOpts{
-	Name:    "minitwit_request_duration_milliseconds",
-	Help:    "Request duration distribution.",
-	Buckets: prometheus.ExponentialBuckets(0.1, 1.5, 5),
+	Name: "minitwit_request_duration_milliseconds",
+	Help: "Request duration distribution.",
 })
 
-var registry = prometheus.NewRegistry()
+var requestStart = time.Now()
 
-func ConfigurePrometheus() {
-	registry.MustRegister(
-		collectors.NewGoCollector(),
-		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+func beforeRequestMiddleware() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		requestStart = time.Now()
+		context.Next()
+	}
+}
 
-	registry.MustRegister(RESPONSE_COUNTER)
-	registry.MustRegister(REQUEST_DURATION_SUMMARY)
-	registry.MustRegister(CPU_LOAD)
+func afterRequestMiddleware() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		context.Next()
+
+		RESPONSE_COUNTER.Inc()
+		requestTime := time.Now().Sub(requestStart)
+		REQUEST_DURATION_SUMMARY.Observe(float64(requestTime.Milliseconds()))
+
+		v, _ := mem.VirtualMemory()
+		CPU_LOAD.Set(v.UsedPercent)
+	}
+}
+
+func ConfigureMetrics(router *gin.Engine) {
+	router.Use(beforeRequestMiddleware())
+	router.Use(afterRequestMiddleware())
+
+	prometheus.MustRegister(RESPONSE_COUNTER)
+	prometheus.MustRegister(REQUEST_DURATION_SUMMARY)
+	prometheus.MustRegister(CPU_LOAD)
 }
 
 func MapMetricsEndpoints(router *gin.Engine) {
@@ -40,12 +60,7 @@ func MapMetricsEndpoints(router *gin.Engine) {
 }
 
 func metricsHandler() gin.HandlerFunc {
-	h := promhttp.HandlerFor(
-		registry,
-		promhttp.HandlerOpts{
-			EnableOpenMetrics: true,
-			Registry:          registry,
-		})
+	h := promhttp.Handler()
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
