@@ -73,10 +73,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "./remote_files/docker_compose.yml"
-          target: "."  
+          source: remote_files/docker_compose.yml
+          target: docker_compose.yml
           overwrite: true
-          strip_components: 1
 
       - name: Configure SSH
         run: |
