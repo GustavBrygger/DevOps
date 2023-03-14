@@ -1,56 +1,55 @@
 package persistence
 
 import (
-	// "fmt"
+	"fmt"
 	"go-minitwit/src/application"
-	// "os"
+	"os"
 
 	"log"
 
 	"gorm.io/driver/postgres"
-	// "gorm.io/driver/sqlserver"
+	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "minitwit_db", "postgres", "postgres", "postgres", 5432)
 
-func GetDbConnection() *gorm.DB {
-
-	return db
+func getAzureConnString(dbPassword string) string {
+	return fmt.Sprintf("sqlserver://%s:%s@minitwit-db.database.windows.net:1433?database=minitwit-db", "minitwit", dbPassword)
 }
 
-func InitDbConnection() *gorm.DB {
-	dsn := "host=minitwit_db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-// var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s port=%d dbname=%s", "localhost", "postgres", "postgres", 5432, "postgres")
+var db *gorm.DB = nil
 
-// func getAzureConnString(dbPassword string) string {
-// 	return fmt.Sprintf("sqlserver://%s:%s@minitwit-db.database.windows.net:1433?database=minitwit-db", "minitwit", dbPassword)
-// }
+func GetDbConnection() *gorm.DB {
+	if db != nil {
+		return db
+	}
 
-// func GetDbConnection() *gorm.DB {
-// 	isProduction := os.Getenv("IS_PRODUCTION")
-// 	if isProduction == "TRUE" {
-// 		dbPassword := os.Getenv("DB_PASSWORD")
-// 		db, err := gorm.Open(sqlserver.Open(getAzureConnString(dbPassword)), &gorm.Config{})
-// 		if err != nil {
-// 			log.Fatal("Failed to connect to database")
-// 		}
+	return initDbConnection()
+}
 
-// 		return db
-// 	}
+func initDbConnection() *gorm.DB {
+	isProduction := os.Getenv("IS_PRODUCTION")
+	if isProduction == "TRUE" {
+		dbPassword := os.Getenv("DB_PASSWORD")
+		azureConn, err := gorm.Open(sqlserver.Open(getAzureConnString(dbPassword)), &gorm.Config{})
+		if err != nil {
+			log.Fatal("Failed to connect to database")
+		}
 
-// 	db, err := gorm.Open(postgres.Open(localConnectionString), &gorm.Config{})
+		return azureConn
+	}
+
+	localConn, err := gorm.Open(postgres.Open(localConnectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database")
 	}
 
-	return db
+	return localConn
 }
 
-
 func ConfigurePersistence() {
-	db = InitDbConnection()
+	db = initDbConnection()
 
 	applyMigrations(db)
 	seed(db)

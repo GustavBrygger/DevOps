@@ -12,7 +12,7 @@ func MapJSONAuthEndpoints(router *gin.Engine) {
 	router.POST("/register", registerUser)
 }
 
-func registerUser(context *gin.Context){
+func registerUser(context *gin.Context) {
 	if err := application.HandleRegister(context, persistence.GetDbConnection()); err != nil {
 		context.AbortWithError(http.StatusInternalServerError, err)
 	}

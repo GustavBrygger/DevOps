@@ -3,20 +3,26 @@ module go-minitwit
 go 1.18
 
 require (
-	github.com/caarlos0/env/v6 v6.10.1
 	github.com/gin-gonic/gin v1.8.2
-	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.5.0
 	gorm.io/driver/postgres v1.4.6
+	gorm.io/driver/sqlserver v1.4.2
 	gorm.io/gorm v1.24.5
 )
 
 require (
+	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/microsoft/go-mssqldb v0.19.0 // indirect
-	gorm.io/driver/sqlserver v1.4.2 // indirect
+	github.com/prometheus/client_golang v1.14.0 // indirect
+	github.com/prometheus/client_model v0.3.0 // indirect
+	github.com/prometheus/common v0.37.0 // indirect
+	github.com/prometheus/procfs v0.8.0 // indirect
 )
 
 require (
