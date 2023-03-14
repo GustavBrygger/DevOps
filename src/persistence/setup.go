@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s port=%d dbname=%s", "localhost", "postgres", "postgres", 5432, "postgres")
+var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "minitwit_db", "postgres", "postgres", "postgres", 5432)
 
 func getAzureConnString(dbPassword string) string {
 	return fmt.Sprintf("sqlserver://%s:%s@minitwit-db.database.windows.net:1433?database=minitwit-db", "minitwit", dbPassword)
@@ -30,6 +30,7 @@ func GetDbConnection() *gorm.DB {
 		return db
 	}
 
+	println(localConnectionString)
 	db, err := gorm.Open(postgres.Open(localConnectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database")
