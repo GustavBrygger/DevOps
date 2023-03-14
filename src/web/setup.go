@@ -12,7 +12,7 @@ func ConfigureWeb(router *gin.Engine) {
 
 	// configureSession must be called before mapAuthEndpoints
 	controller.ConfigureSession(router)
-	controller.ConfigurePrometheus(router)
+	controller.ConfigureMetrics(router)
 	mapEndpoints(router)
 }
 

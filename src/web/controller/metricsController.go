@@ -26,19 +26,18 @@ var REQUEST_DURATION_SUMMARY = prometheus.NewHistogram(prometheus.HistogramOpts{
 
 var requestStart = time.Now()
 
-func metricsBeforeMiddleware() gin.HandlerFunc {
+func beforeRequestMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		requestStart = time.Now()
-
 		context.Next()
 	}
 }
 
-func metricsAfterMiddleware() gin.HandlerFunc {
+func afterRequestMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		context.Next()
-		RESPONSE_COUNTER.Inc()
 
+		RESPONSE_COUNTER.Inc()
 		requestTime := time.Now().Sub(requestStart)
 		REQUEST_DURATION_SUMMARY.Observe(float64(requestTime.Milliseconds()))
 
@@ -47,9 +46,9 @@ func metricsAfterMiddleware() gin.HandlerFunc {
 	}
 }
 
-func ConfigurePrometheus(router *gin.Engine) {
-	router.Use(metricsBeforeMiddleware())
-	router.Use(metricsAfterMiddleware())
+func ConfigureMetrics(router *gin.Engine) {
+	router.Use(beforeRequestMiddleware())
+	router.Use(afterRequestMiddleware())
 
 	prometheus.MustRegister(RESPONSE_COUNTER)
 	prometheus.MustRegister(REQUEST_DURATION_SUMMARY)
