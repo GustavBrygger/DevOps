@@ -3,11 +3,10 @@ module go-minitwit
 go 1.18
 
 require (
-	github.com/caarlos0/env/v6 v6.10.1
 	github.com/gin-gonic/gin v1.8.2
-	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.5.0
 	gorm.io/driver/postgres v1.4.6
+	gorm.io/driver/sqlserver v1.4.2
 	gorm.io/gorm v1.24.5
 )
 
@@ -16,7 +15,6 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/microsoft/go-mssqldb v0.19.0 // indirect
-	gorm.io/driver/sqlserver v1.4.2 // indirect
 )
 
 require (
