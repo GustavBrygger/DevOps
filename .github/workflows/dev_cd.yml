@@ -79,7 +79,10 @@ jobs:
         run: sudo apt-get install -y openssh-client
 
       - name: Copy files to remote server
-        run: scp -i $SSH_PRIVATE_KEY ./remote_files/* ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > ssh_key
+          chmod 600 ssh_key
+          scp -i ssh_key ./remote_files/* ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
         continue-on-error: true
