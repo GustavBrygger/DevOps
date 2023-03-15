@@ -74,6 +74,15 @@ jobs:
           chmod 600 ~/.ssh/minitwit.key
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
+        
+      - name: Install ssh client
+        run: sudo apt-get install -y openssh-client
+
+      - name: Copy files to remote server
+        run: scp ./remote_files/* ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        continue-on-error: true
 
       - name: Deploy to server
         # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
