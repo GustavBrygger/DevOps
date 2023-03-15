@@ -2,7 +2,7 @@ on:
   push:
     # Run workflow every time something is pushed to the main branch
     branches:
-      - oliver_repo
+      - main
       
   # allow manual triggers for now too
   workflow_dispatch:
