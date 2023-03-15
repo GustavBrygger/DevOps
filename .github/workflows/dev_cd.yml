@@ -80,7 +80,7 @@ jobs:
 
       - name: Copy files to remote server
         run: >
-          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no ./remote_files/* ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/
+          scp -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no ./remote_files/* ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/minitwit/
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
