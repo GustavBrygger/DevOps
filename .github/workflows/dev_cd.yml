@@ -79,11 +79,11 @@ jobs:
         run: sudo apt-get install -y openssh-client
 
       - name: Copy files to remote server
-        run: |
-          echo "${{ secrets.SSH_KEY }}" > ssh_key
-          chmod 600 ssh_key
-          scp -i ssh_key ./remote_files/* ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/
+        run: >
+          scp -i ~/.ssh/minitwit.key ./remote_files/* ${{secrets.SSH_USER}}@${{secrets.SSH_HOST}}:/
         env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
         continue-on-error: true
 
