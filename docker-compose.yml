@@ -54,6 +54,15 @@ services:
     networks:
       - main
 
+  test:
+    container_name: test
+    build:
+      context: .
+      dockerfile: Dockerfile-minitwittests
+    depends_on:
+     - db
+     - server
+
 volumes:
   db:
     driver: local

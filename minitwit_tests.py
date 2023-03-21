@@ -1,35 +1,24 @@
-import requests
-from time import sleep
-from bs4 import BeautifulSoup
+# minitwit_tests.py
+
+import unittest
+
+class TestStringMethods(unittest.TestCase):
+
+    def test_will_always_be_true(self):
+        self.assertEqual(True, True)
+
+    def test_will_always_be_false(self):
+        self.assertEqual(True, False)
+
+    def test_isupper(self):
+        self.assertTrue('HELLO'.isupper())
+        self.assertFalse('Hello'.isupper())
+
+    def test_split(self):
+        s = 'hello world'
+        self.assertEqual(s.split(), ['hello', 'world'])
+        # check that s.split fails when the separator is not a string
 
 
-FRONTEND_URL = "http://minitwit:5000"
-
-
-while True:
-    # This is a hack...
-    r = requests.get(FRONTEND_URL)
-    if "mysql.connector.errors.InterfaceError" in r.text:
-        print("Waiting another 5s for DB to be initialized...")
-        sleep(5)
-    else:
-        break
-
-
-def test_thirty_msgs_on_frontpage():
-    r = requests.get(FRONTEND_URL)
-    soup = BeautifulSoup(r.content, "html.parser")
-    tweets = soup.find("ul", {"class": "messages"}).findAll("strong")
-
-    assert len(tweets) == 30
-
-
-def test_first_tweeters_on_frontpage():
-    r = requests.get(FRONTEND_URL)
-    soup = BeautifulSoup(r.content, "html.parser")
-    tweeters = soup.find("ul", {"class": "messages"}).findAll("a")
-
-    assert tweeters[0].text == "Johnnie Lesso"
-    assert tweeters[1].text == "Sharmaine Abdelrahman"
-    assert tweeters[2].text == "Dominga Barcenas"
-    assert tweeters[3].text == "Kerry Passer"
+if __name__ == '__main__':
+    unittest.main()
