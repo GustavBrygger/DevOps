@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-
+	"strconv"
 	"gorm.io/gorm"
 )
 
@@ -43,6 +43,19 @@ func GetMessagesByUserID(db *gorm.DB, userID uint) []MessageDTO {
 	return toMessageDTO(db, messages)
 }
 
+func GetAllFollowedUserMessages(db *gorm.DB, userID uint) []MessageDTO {
+	var followed []uint
+	db.Table("user_followers").Where("follower_id = " + strconv.Itoa(int(userID))).Select("user_id").Find(&followed)
+
+	var messages []MessageDTO
+	for _, element := range followed {
+		user_messages := GetMessagesByUserID(db, element)
+		messages = append(messages, user_messages...)
+	}
+
+	return messages
+}
+
 func GetNMessagesByUsername(db *gorm.DB, username string, n int) []MessageDTO {
 	user, _ := GetUserByUsername(db, username)
 	var messages []Message
@@ -63,7 +76,7 @@ func toMessageDTO(db *gorm.DB, messages []Message) []MessageDTO {
 		user, _ := GetUserByID(db, message.UserID)
 		var avatarURL = getAvatarURL(user.Email)
 		messageDTO := MessageDTO{
-			CreatedAt: message.CreatedAt.Format("2006-01-02"),
+			CreatedAt: message.CreatedAt.Format("2006-01-02 15:04:05"),
 			Username:  user.Username,
 			Text:      message.Text,
 			AvatarURL: avatarURL,

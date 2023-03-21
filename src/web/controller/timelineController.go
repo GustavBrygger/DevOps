@@ -4,6 +4,7 @@ import (
 	"go-minitwit/src/application"
 	"go-minitwit/src/persistence"
 	"net/http"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -23,7 +24,14 @@ func renderTimeline(context *gin.Context) {
 		return
 	}
 
-	messages := application.GetMessagesByUserID(db, currUser.ID)
+	messages := application.GetAllFollowedUserMessages(db, currUser.ID)
+	own_messages := application.GetMessagesByUserID(db, currUser.ID)
+	messages = append(messages, own_messages...)
+
+	sort.Slice(messages, func(i, j int) bool {
+		return messages[i].CreatedAt > messages[j].CreatedAt
+	})
+
 	context.HTML(http.StatusOK, "timeline.html", gin.H{
 		"Endpoint": "/",
 		"User":     currUser,
