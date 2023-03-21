@@ -25,7 +25,7 @@ func getNMessagesJSON(context *gin.Context) {
 	no_query := context.Request.URL.Query().Get("no")
 	n, err := strconv.ParseInt(no_query, 10, 64)
 	if err != nil {
-		context.AbortWithError(http.StatusInternalServerError, err)
+		n = 100
 	}
 
 	messages := application.GetFirstNMessages(persistence.GetDbConnection(), int(n))
