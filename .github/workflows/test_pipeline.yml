@@ -1,0 +1,12 @@
+on: 
+  workflow_dispatch:
+    manual: true
+    
+
+name: Test
+
+jobs:
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    run: docker run test
