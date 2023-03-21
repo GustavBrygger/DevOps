@@ -2,7 +2,6 @@ on:
   workflow_dispatch:
     manual: true
     
-
 name: Test
 
 jobs:
