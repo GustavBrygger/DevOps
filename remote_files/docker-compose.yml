@@ -41,7 +41,7 @@ services:
     volumes:
       - ./dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
       - ./dashboard-datasources.yaml:/etc/grafana/provisioning/datasources/dashboard-datasources.yaml
-      - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboard-provider.yaml
+      - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboardsdashboard-provider.yaml
 
 
 volumes:
