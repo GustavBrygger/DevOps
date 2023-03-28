@@ -24,7 +24,7 @@ services:
         - db
         - grafana
         - prometheus
-        
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -34,10 +34,14 @@ services:
       - "9090:9090"
 
   grafana:
-    image: grafana/grafana-oss
+    image: grafana/grafana-oss:9.4.7
     container_name: grafana
     ports:
       - "3000:3000"
+    volumes:
+      - ./dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+      - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml
+
 
 volumes:
     db:
