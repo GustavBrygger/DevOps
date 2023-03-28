@@ -39,13 +39,15 @@ func beforeRequestMiddleware() gin.HandlerFunc {
 func afterRequestMiddleware() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		context.Next()
+		if context.Writer.Status() >= 200 && context.Writer.Status() < 300 {
+			RESPONSE_COUNTER.Inc()
+			requestTime := time.Now().Sub(requestStart)
+			
+			REQUEST_DURATION_SUMMARY.WithLabelValues(context.Request.URL.Path).Observe(float64(requestTime.Milliseconds()))
 
-		RESPONSE_COUNTER.Inc()
-		requestTime := time.Now().Sub(requestStart)
-		REQUEST_DURATION_SUMMARY.WithLabelValues(context.Request.URL.Path).Observe(float64(requestTime.Milliseconds()))
-
-		v, _ := mem.VirtualMemory()
-		CPU_LOAD.Set(v.UsedPercent)
+			v, _ := mem.VirtualMemory()
+			CPU_LOAD.Set(v.UsedPercent)
+		}
 	}
 }
 
