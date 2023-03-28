@@ -25,4 +25,4 @@ jobs:
           version: v1.29
 
           # Optional: golangci-lint command line arguments.
-          args: ---disable errcheck
+          args: --disable errcheck
