@@ -47,4 +47,4 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/test:latest
 
       - name: Run tests
-        run: docker run test
+        run: docker run ${{ secrets.DOCKER_USERNAME }}/test
