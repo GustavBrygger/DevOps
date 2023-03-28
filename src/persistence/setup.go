@@ -56,6 +56,9 @@ func ConfigurePersistence() {
 }
 
 func applyMigrations(db *gorm.DB) {
-	db.AutoMigrate(&application.User{})
-	db.AutoMigrate(&application.Message{})
+	err1 := db.AutoMigrate(&application.User{})
+	err2 := db.AutoMigrate(&application.Message{})
+	if err1 != nil || err2 != nil {
+		log.Fatal("Migration failed")
+	}
 }
