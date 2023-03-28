@@ -32,7 +32,6 @@
   "annotations": {
     "list": []
   },
-  "editMode": false,
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
@@ -81,7 +80,7 @@
               "hide": false,
               "intervalFactor": 2,
               "refId": "A",
-              "step": 10
+              "step": 2
             }
           ],
           "thresholds": [],
@@ -136,7 +135,7 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -166,5 +165,5 @@
   },
   "timezone": "",
   "title": "works",
-  "version": 1
+  "version": 2
 }
