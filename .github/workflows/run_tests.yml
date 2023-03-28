@@ -53,10 +53,4 @@ jobs:
       - name: Do we run this
         run: echo "Hello this is running"
   
-  jubii:
-      runs-on: ubuntu-latest
-      steps:
-        - name: jobTwo
-          run: echo "job2"
-  
       
