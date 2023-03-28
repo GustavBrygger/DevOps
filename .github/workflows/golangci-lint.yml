@@ -4,7 +4,8 @@ on:
     tags:
       - v*
     branches:
-      - setup-linting
+      - main
+      - dev
   pull_request:
 permissions:
   contents: read
