@@ -20,11 +20,11 @@ var RESPONSE_COUNTER = prometheus.NewCounter(prometheus.CounterOpts{
 })
 
 var REQUEST_DURATION_SUMMARY = prometheus.NewHistogramVec(prometheus.HistogramOpts{
-	Name: "minitwit_request_duration_milliseconds",
-	Help: "Request duration distribution.",
+	Name:    "minitwit_request_duration_milliseconds",
+	Help:    "Request duration distribution.",
 	Buckets: prometheus.DefBuckets,
 },
-[]string{"path"},
+	[]string{"path"},
 )
 
 var requestStart = time.Now()
@@ -42,7 +42,7 @@ func afterRequestMiddleware() gin.HandlerFunc {
 		if context.Writer.Status() >= 200 && context.Writer.Status() < 300 {
 			RESPONSE_COUNTER.Inc()
 			requestTime := time.Since(requestStart)
-			
+
 			REQUEST_DURATION_SUMMARY.WithLabelValues(context.Request.URL.Path).Observe(float64(requestTime.Milliseconds()))
 
 			v, _ := mem.VirtualMemory()
