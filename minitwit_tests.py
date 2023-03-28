@@ -7,9 +7,6 @@ class TestStringMethods(unittest.TestCase):
     def test_will_always_be_true(self):
         self.assertEqual(True, True)
 
-    def test_will_always_be_false(self):
-        self.assertEqual(True, False)
-
     def test_isupper(self):
         self.assertTrue('HELLO'.isupper())
         self.assertFalse('Hello'.isupper())
