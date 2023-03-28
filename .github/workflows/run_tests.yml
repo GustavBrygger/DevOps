@@ -48,3 +48,7 @@ jobs:
 
       - name: Run tests
         run: docker run ${{ secrets.DOCKER_USERNAME }}/test
+        
+        
+      - name: Do we run this
+        run: echo "Hello this is running"
