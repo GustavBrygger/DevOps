@@ -39,8 +39,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
-      - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml
+      - ./provisioning:/etc/grafana/provisioning
 
 
 volumes:

@@ -28,10 +28,7 @@
   "liveNow": false,
   "panels": [
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "11ptRyBVk"
-      },
+      "datasource": "Prometheus",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -106,10 +103,7 @@
       },
       "targets": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "11ptRyBVk"
-          },
+          "datasource": "Prometheus",
           "editorMode": "code",
           "expr": "rate(minitwit_request_duration_milliseconds_sum{path=~\"/|/msgs|/add_message\"}[5m]) / \n(rate(minitwit_request_duration_milliseconds_count{path=~\"/|/msgs|/add_message\"}[5m]))",
           "legendFormat": "__auto",
