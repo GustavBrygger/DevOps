@@ -41,7 +41,7 @@ func afterRequestMiddleware() gin.HandlerFunc {
 		context.Next()
 		if context.Writer.Status() >= 200 && context.Writer.Status() < 300 {
 			RESPONSE_COUNTER.Inc()
-			requestTime := time.Now().Sub(requestStart)
+			requestTime := time.Since(requestStart)
 			
 			REQUEST_DURATION_SUMMARY.WithLabelValues(context.Request.URL.Path).Observe(float64(requestTime.Milliseconds()))
 
