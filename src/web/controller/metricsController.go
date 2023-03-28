@@ -38,7 +38,7 @@ func afterRequestMiddleware() gin.HandlerFunc {
 		context.Next()
 
 		RESPONSE_COUNTER.Inc()
-		requestTime := time.Now().Sub(requestStart)
+		requestTime := time.Since(requestStart)
 		REQUEST_DURATION_SUMMARY.Observe(float64(requestTime.Milliseconds()))
 
 		v, _ := mem.VirtualMemory()
