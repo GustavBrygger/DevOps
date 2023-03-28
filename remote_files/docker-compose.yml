@@ -40,7 +40,8 @@ services:
       - "3000:3000"
     volumes:
       - ./dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
-      - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml
+      - ./dashboard-datasources.yaml:/etc/grafana/provisioning/datasources/dashboard-datasources.yaml
+      - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboard-provider.yaml
 
 
 volumes:
