@@ -7,7 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/shirou/gopsutil/v3/mem"
-	"string"
+	"strings"
 )
 
 var CPU_LOAD = prometheus.NewGauge(prometheus.GaugeOpts{
