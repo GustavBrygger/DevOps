@@ -54,7 +54,7 @@ func afterRequestMiddleware() gin.HandlerFunc {
 				urlPath = strings.SplitN(urlPath, "/fllws/", -1)[0] + "/fllws/" + ":user"
 			}
 
-			REQUEST_DURATION_SUMMARY.WithLabelValues(context.Request.URL.Path).Observe(float64(requestTime.Milliseconds()))
+			REQUEST_DURATION_SUMMARY.WithLabelValues(urlPath).Observe(float64(requestTime.Milliseconds()))
 
 			v, _ := mem.VirtualMemory()
 			CPU_LOAD.Set(v.UsedPercent)
