@@ -4,8 +4,7 @@ on:
     tags:
       - v*
     branches:
-      - main
-      - dev
+      - DontRunAtm
   pull_request:
 permissions:
   contents: read
