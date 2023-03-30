@@ -66,6 +66,7 @@ func jsonGetFollowersToUser(context *gin.Context) {
 	db := persistence.GetDbConnection()
 
 	userName := context.Param("username")
+
 	user, err := application.GetUserByUsername(persistence.GetDbConnection(), userName)
 	if err != nil {
 		context.AbortWithError(http.StatusInternalServerError, err)
@@ -73,7 +74,10 @@ func jsonGetFollowersToUser(context *gin.Context) {
 
 	userID := user.ID
 	limitToQuery := context.Request.URL.Query().Get("no")
-	limitToQueryInt, _ := strconv.Atoi(limitToQuery)
+	limitToQueryInt, err := strconv.Atoi(limitToQuery)
+	if err != nil {
+		limitToQueryInt = 100
+	}
 
 	users, err := application.GetFirstNFollowersToUserid(db, userID, uint(limitToQueryInt))
 	if err != nil {
