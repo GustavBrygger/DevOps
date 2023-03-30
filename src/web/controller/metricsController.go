@@ -43,19 +43,18 @@ func afterRequestMiddleware() gin.HandlerFunc {
 		if context.Writer.Status() >= 200 && context.Writer.Status() < 300 {
 			RESPONSE_COUNTER.Inc()
 			requestTime := time.Since(requestStart)
-      
+
 			urlPath := context.Request.URL.Path
-			
-			if( len(strings.SplitN(urlPath, "/msgs/", -1)) == 2 ){
+
+			if len(strings.SplitN(urlPath, "/msgs/", -1)) == 2 {
 				urlPath = strings.SplitN(urlPath, "/msgs/", -1)[0] + "/msgs/" + ":user"
 			}
 
-			if( len(strings.SplitN(urlPath, "/fllws/", -1)) == 2 ){
+			if len(strings.SplitN(urlPath, "/fllws/", -1)) == 2 {
 				urlPath = strings.SplitN(urlPath, "/fllws/", -1)[0] + "/fllws/" + ":user"
 			}
 
 			REQUEST_DURATION_SUMMARY.WithLabelValues(urlPath).Observe(float64(requestTime.Milliseconds()))
-
 
 			v, _ := mem.VirtualMemory()
 			CPU_LOAD.Set(v.UsedPercent)
