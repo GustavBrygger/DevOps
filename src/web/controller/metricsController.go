@@ -7,6 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/shirou/gopsutil/v3/mem"
+	"strings"
 )
 
 var CPU_LOAD = prometheus.NewGauge(prometheus.GaugeOpts{
@@ -43,7 +44,17 @@ func afterRequestMiddleware() gin.HandlerFunc {
 			RESPONSE_COUNTER.Inc()
 			requestTime := time.Since(requestStart)
 
-			REQUEST_DURATION_SUMMARY.WithLabelValues(context.Request.URL.Path).Observe(float64(requestTime.Milliseconds()))
+			urlPath := context.Request.URL.Path
+
+			if len(strings.SplitN(urlPath, "/msgs/", -1)) == 2 {
+				urlPath = strings.SplitN(urlPath, "/msgs/", -1)[0] + "/msgs/" + ":user"
+			}
+
+			if len(strings.SplitN(urlPath, "/fllws/", -1)) == 2 {
+				urlPath = strings.SplitN(urlPath, "/fllws/", -1)[0] + "/fllws/" + ":user"
+			}
+
+			REQUEST_DURATION_SUMMARY.WithLabelValues(urlPath).Observe(float64(requestTime.Milliseconds()))
 
 			v, _ := mem.VirtualMemory()
 			CPU_LOAD.Set(v.UsedPercent)
