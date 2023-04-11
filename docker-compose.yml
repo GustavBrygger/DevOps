@@ -1,8 +1,18 @@
 version: '3.8'
 
 networks:
+  elk:
   main:
     name: itu-minitwit-network
+
+volumes:
+  db:
+    driver: local
+  server:
+    external: false
+  elk_elasticsearch_data:
+  kibanadata:
+
 
 services:
   db:
@@ -36,6 +46,7 @@ services:
       - grafana
       - prometheus
 
+  # Monitoring
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -54,8 +65,53 @@ services:
     networks:
       - main
 
-volumes:
-  db:
-    driver: local
-  server:
-    external: false
+  # Logging
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:8.6.2"
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+    volumes:
+      - elk_elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - elk
+
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:8.6.2"
+    environment:
+      - "elasticsearch.hosts='[\"http://elasticsearch:9200\"]'"
+      - "xpack.security.enabled=false"
+    networks:
+      - elk
+    volumes:
+      - kibanadata:/usr/share/kibana/data
+
+  filebeat:
+    image: "docker.elastic.co/beats/filebeat:8.6.2"
+    environment:
+      - "ELK_USER=${ELK_USER}"
+    user: root
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  nginx:
+    image: nginx
+    ports:
+      - 9200:9200
+      - 5601:5601
+    networks:
+      - elk
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ./.htpasswd
+        target: /etc/nginx/.htpasswd
