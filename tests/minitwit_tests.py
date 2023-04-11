@@ -1,6 +1,7 @@
 # minitwit_tests.py
 
 import unittest
+import requests
 import psycopg2
 import os
 
@@ -26,16 +27,17 @@ def init_db():
         cur = conn.cursor()
 
                 
-        # execute a statement
+        # display the PostgreSQL database server version
         print('PostgreSQL database version:')
         cur.execute('SELECT version()')
-
-        # Run the SQL file to the database
-        cur.execute(open("schema.sql", "r").read())
-
-        # display the PostgreSQL database server version
         db_version = cur.fetchone()
+        conn.commit()
         print(db_version)
+
+        #cur.execute('SELECT * FROM users')
+        #answer = cur.fetchone()
+        #print(answer)
+        #conn.commit()
         
         # close the communication with the PostgreSQL
         cur.close()
@@ -55,14 +57,17 @@ def init_db():
 class TestStringMethods(unittest.TestCase):
 
 
-    
-
-
     def test_will_always_be_true(self):
         self.assertEqual(True, True)
 
-    def test_will_always_be_false(self):
-        self.assertEqual(True, False)
+    def test_if_register_works(self):
+        API_ENDPOINT = "http://server:8080/register"
+        data = {'email':'gustav.brygger',
+                'pwd':'password',
+                'username':'gubr'}
+        
+        r = requests.post(url = API_ENDPOINT, data = data)
+        self.assertEqual(r.status_code, 204)
 
     def test_isupper(self):
         self.assertTrue('HELLO'.isupper())
@@ -76,5 +81,5 @@ class TestStringMethods(unittest.TestCase):
 
 if __name__ == '__main__':
     init_db()
-
+    
     unittest.main()
