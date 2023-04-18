@@ -102,7 +102,7 @@ services:
       - elk
     volumes:
       - type: bind
-        source: ./remote_files/nginx.conf
+        source: ./nginx.conf
         target: /etc/nginx/nginx.conf
       - type: bind
         source: ./.htpasswd
