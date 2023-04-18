@@ -1,4 +1,14 @@
 on: 
+  push:
+    # Run workflow every time something is pushed to the main branch
+    branches:
+      - main
+      - dev
+      
+   pull_request:
+    branches:
+      - main
+      
   workflow_dispatch:
     inputs:
       logLevel:
