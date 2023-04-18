@@ -1,4 +1,14 @@
 version: '3.3'
+
+volumes:
+  db:
+    driver: local
+  server:
+    external: false
+  elk_elasticsearch_data:
+  kibanadata:
+
+
 services:
   db:
     container_name: minitwit_db
@@ -9,21 +19,21 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
-    volumes: 
+    volumes:
       - db:/var/lib/postgresql/data
-      
+
   server:
-      container_name: minitwit
-      image: ${DOCKER_USERNAME}/minitwitimage
-      ports:
-        - "8080:8080"
-      restart: always
-      links:
-        - db:database
-      depends_on:
-        - db
-        - grafana
-        - prometheus
+    container_name: minitwit
+    image: ${DOCKER_USERNAME}/minitwitimage
+    ports:
+      - "8080:8080"
+    restart: always
+    links:
+      - db:database
+    depends_on:
+      - db
+      - grafana
+      - prometheus
 
   # Monitoring
   prometheus:
@@ -43,7 +53,6 @@ services:
       - ./dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
       - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml
       - ./dashboard-datasources.yaml:/etc/grafana/provisioning/datasources/dashboard-datasources.yaml
-
 
   # Logging
   elasticsearch:
@@ -83,23 +92,16 @@ services:
       - elasticsearch
 
   nginx:
-      image: nginx
-      ports:
-        - 9200:9200
-        - 5601:5601
-      networks:
-        - elk
-      volumes:
-        - type: bind
-          source: ./remote_files/nginx.conf
-          target: /etc/nginx/nginx.conf
-        - type: bind
-          source: ./.htpasswd
-          target: /etc/nginx/.htpasswd
-
-
-volumes:
-    db:
-      driver: local
-    server:
-      external: false
+    image: nginx
+    ports:
+      - 9200:9200
+      - 5601:5601
+    networks:
+      - elk
+    volumes:
+      - type: bind
+        source: ./remote_files/nginx.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ./.htpasswd
+        target: /etc/nginx/.htpasswd
