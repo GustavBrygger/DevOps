@@ -7,9 +7,6 @@ import os
 
 BASE_URL = 'http://127.0.0.1:5432'
 
-DATABASE = "postgres"
-USERNAME = 'postgres'
-PWD = 'postgres'
 PORT = '5432'
 
 
@@ -19,9 +16,9 @@ def init_db():
         """Connect database ."""
         conn = psycopg2.connect(
             host="db",
-            database=DATABASE,
-            user=USERNAME,
-            password=PWD,
+            database='postgres',
+            user='postgres',
+            password='postgres',
             port=PORT)
         
         cur = conn.cursor()
