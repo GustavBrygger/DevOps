@@ -31,7 +31,7 @@ name: Dev-workflow
 
 jobs:
   run-test-workflow:
-    uses: organizationGB/DevOps/.github/workflows/run_tests.yml@main
+    uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
   
   build:
     needs: run-test-workflow
