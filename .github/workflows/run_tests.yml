@@ -3,11 +3,11 @@ on:
     branches:
       - main
       - dev
-    pull_request:
-      types: [opened, reopened]
-      branches:
-        - main
-        - testPipeline
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - main
+      - testPipeline
   workflow_dispatch:
     inputs:
       logLevel:
