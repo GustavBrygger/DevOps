@@ -1,0 +1,63 @@
+version: '3.8'
+
+networks:
+  main:
+    name: itu-minitwit-network
+
+services:
+  db:
+    container_name: minitwit_db
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - main
+
+  server:
+    container_name: minitwit
+    build:
+      context: .
+      dockerfile: Dockerfile-minitwit
+    ports:
+      - "8080:8080"
+    restart: always
+    links:
+      - db:database
+    networks:
+      - main
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+     db:
+      condition: service_healthy
+
+  test:
+    container_name: test
+    build:
+      context: .
+      dockerfile: Dockerfile-minitwittests
+    networks:
+    - main
+    depends_on:
+      db:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+
+volumes:
+  db:
+    driver: local
+  server:
+    external: false
