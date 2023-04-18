@@ -1,0 +1,61 @@
+version: '3.8'
+
+networks:
+  main:
+    name: itu-minitwit-network
+
+services:
+  db:
+    container_name: minitwit_db
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - main
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  server:
+    container_name: minitwit
+    build:
+      context: .
+      dockerfile: Dockerfile-minitwit
+    ports:
+      - "8080:8080"
+    restart: always
+    links:
+      - db:database
+    networks:
+      - main
+    depends_on:
+      - db
+      - grafana
+      - prometheus
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./remote_files/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - main
+
+  grafana:
+    image: grafana/grafana:4.5.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - main
+
+volumes:
+  db:
+    driver: local
+  server:
+    external: false
