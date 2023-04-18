@@ -1,4 +1,16 @@
 version: '3.3'
+
+networks:
+  elk:
+
+volumes:
+  db:
+    driver: local
+  server:
+    external: false
+  elk_elasticsearch_data:
+  kibanadata:
+
 services:
   db:
     container_name: minitwit_db
@@ -9,22 +21,23 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
-    volumes: 
+    volumes:
       - db:/var/lib/postgresql/data
-      
-  server:
-      container_name: minitwit
-      image: ${DOCKER_USERNAME}/minitwitimage
-      ports:
-        - "8080:8080"
-      restart: always
-      links:
-        - db:database
-      depends_on:
-        - db
-        - grafana
-        - prometheus
 
+  server:
+    container_name: minitwit
+    image: ${DOCKER_USERNAME}/minitwitimage
+    ports:
+      - "8080:8080"
+    restart: always
+    links:
+      - db:database
+    depends_on:
+      - db
+      - grafana
+      - prometheus
+
+  # Monitoring
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -43,9 +56,54 @@ services:
       - ./dashboard-provider.yaml:/etc/grafana/provisioning/dashboards/dashboard-provider.yaml
       - ./dashboard-datasources.yaml:/etc/grafana/provisioning/datasources/dashboard-datasources.yaml
 
+  # Logging
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:8.6.2"
+    container_name: elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+    volumes:
+      - elk_elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - elk
 
-volumes:
-    db:
-      driver: local
-    server:
-      external: false
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:8.6.2"
+    container_name: kibana
+    environment:
+      - "elasticsearch.hosts='[\"http://elasticsearch:9200\"]'"
+      - "xpack.security.enabled=false"
+    networks:
+      - elk
+    volumes:
+      - kibanadata:/usr/share/kibana/data
+
+  filebeat:
+    image: "docker.elastic.co/beats/filebeat:8.6.2"
+    container_name: filebeat
+    user: root
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  nginx:
+    image: nginx
+    ports:
+      - 9200:9200
+      - 5601:5601
+    networks:
+      - elk
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+      - type: bind
+        source: ./.htpasswd
+        target: /etc/nginx/.htpasswd
