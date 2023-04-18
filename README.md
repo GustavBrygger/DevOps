@@ -17,6 +17,7 @@ docker-compose up
 If files have been changed, then instead run
 ```sh
 docker-compose up --build
+This is a tests
 ```
 
 
