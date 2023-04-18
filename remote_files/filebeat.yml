@@ -17,18 +17,23 @@ output.elasticsearch:
   hosts: ["elasticsearch:9200"]
   indices:
     - index: "filebeat-elastic-%{[agent.version]}-%{+yyyy.MM.dd}"
-      when.contains:
-            container.name: "filebeat"
-            container.name: "elasticsearch"
-            container.name: "kibana"
+      when:
+        contains:
+          container.name: "filebeat"
+        contains:
+          container.name: "elasticsearch"
+        contains:
+          container.name: "kibana"
     
     - index: "filebeat-minitwit-%{[agent.version]}-%{+yyyy.MM.dd}"
-      when.contains:
+      when:
+        contains:
             container.name: "minitwit"
 
     - index: "filebeat-nginx-%{[agent.version]}-%{+yyyy.MM.dd}"
-      when.contains:
-        container.name: "nginx"
+      when:
+        contains:
+          container.name: "nginx"
 
 logging.json: true
 logging.metrics.enabled: false

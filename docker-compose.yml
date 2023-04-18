@@ -92,11 +92,9 @@ services:
   filebeat:
     image: "docker.elastic.co/beats/filebeat:8.6.2"
     container_name: filebeat
-    environment:
-      - "ELK_USER=${ELK_USER}"
     user: root
     volumes:
-      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./remote_files/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -113,8 +111,8 @@ services:
       - elk
     volumes:
       - type: bind
-        source: ./nginx.conf
+        source: ./remote_files/nginx.conf
         target: /etc/nginx/nginx.conf
       - type: bind
-        source: ./.htpasswd
+        source: ./remote_files/.htpasswd
         target: /etc/nginx/.htpasswd
