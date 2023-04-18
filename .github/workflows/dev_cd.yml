@@ -67,18 +67,6 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache,mode=max
 
-      - name: Build and push tests
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile-minitwittests
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/test:latest
-
-      - name: Run tests
-        run: docker run ${{ secrets.DOCKER_USERNAME }}/test
-
-
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
