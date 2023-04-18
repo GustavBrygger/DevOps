@@ -1,5 +1,8 @@
 version: '3.3'
 
+networks:
+  elk:
+
 volumes:
   db:
     driver: local
@@ -7,7 +10,6 @@ volumes:
     external: false
   elk_elasticsearch_data:
   kibanadata:
-
 
 services:
   db:
