@@ -58,7 +58,7 @@ class TestStringMethods(unittest.TestCase):
 
 
     def test_will_always_be_true(self):
-        self.assertEqual(True, True)
+        self.assertEqual(True, False)
 
     def test_if_register_works(self):
         API_ENDPOINT = "http://server:8080/register"
