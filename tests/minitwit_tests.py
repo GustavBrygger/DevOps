@@ -50,7 +50,7 @@ def init_db():
 class TestStringMethods(unittest.TestCase):
 
     def test_will_always_be_true(self):
-        self.assertEqual(True, False)
+        self.assertEqual(True, True)
 
     def test_if_register_works(self):
         API_ENDPOINT = "http://server:8080/register"
