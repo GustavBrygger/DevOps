@@ -6,7 +6,7 @@ on:
     pull_request:
       branches:
         - main
-        - testPipeline
+        - dev
   workflow_dispatch:
     inputs:
       logLevel:
