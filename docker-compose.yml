@@ -113,5 +113,5 @@ services:
         source: ./remote_files/nginx.conf
         target: /etc/nginx/nginx.conf
       - type: bind
-        source: ./remote_files/.htpasswd
+        source: ./.htpasswd
         target: /etc/nginx/.htpasswd
