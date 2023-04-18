@@ -13,6 +13,7 @@ volumes:
   elk_elasticsearch_data:
   kibanadata:
 
+
 services:
   db:
     container_name: minitwit_db
