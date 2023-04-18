@@ -40,6 +40,10 @@ jobs:
     environment: ${{inputs.environment}}
 
     steps:
+    
+      - name: run test workflow
+        uses: ./.github/workflows/run_tests.yml
+    
       - name: Checkout
         uses: actions/checkout@v2
 
