@@ -21,7 +21,7 @@ func jsonfollowUser(context *gin.Context) {
 
 	userNameToFollow := context.Param("username")
 
-	//Read body and convert form byteArray => string  => JSON
+	// Read body and convert from byteArray => string  => JSON
 	bodyBites, err := ioutil.ReadAll(context.Request.Body)
 	bodyString := string(bodyBites)
 	var bodyJson map[string]interface{}
@@ -30,9 +30,9 @@ func jsonfollowUser(context *gin.Context) {
 		context.AbortWithStatus(404)
 	}
 
-	//Check if we need to follow or unFollow
+	// Check if we need to follow or unFollow
 	followUsername, isFollowInBody := bodyJson["follow"]
-	unfollowUsername, _ := bodyJson["unfollow"]
+	unfollowUsername := bodyJson["unfollow"]
 
 	if isFollowInBody {
 		user, err := application.GetUserByUsername(persistence.GetDbConnection(), followUsername.(string))
@@ -66,14 +66,18 @@ func jsonGetFollowersToUser(context *gin.Context) {
 	db := persistence.GetDbConnection()
 
 	userName := context.Param("username")
+
 	user, err := application.GetUserByUsername(persistence.GetDbConnection(), userName)
 	if err != nil {
 		context.AbortWithError(http.StatusInternalServerError, err)
 	}
-	userID := user.ID
 
+	userID := user.ID
 	limitToQuery := context.Request.URL.Query().Get("no")
-	limitToQueryInt, _ := strconv.Atoi(limitToQuery)
+	limitToQueryInt, err := strconv.Atoi(limitToQuery)
+	if err != nil {
+		limitToQueryInt = 100
+	}
 
 	users, err := application.GetFirstNFollowersToUserid(db, userID, uint(limitToQueryInt))
 	if err != nil {
@@ -85,6 +89,6 @@ func jsonGetFollowersToUser(context *gin.Context) {
 		userNameListToReturn = append(userNameListToReturn, user.Username)
 	}
 
-	usernames, err := json.Marshal(map[string]interface{}{"follows": userNameListToReturn})
+	usernames, _ := json.Marshal(map[string]interface{}{"follows": userNameListToReturn})
 	context.Writer.Write(usernames)
 }
