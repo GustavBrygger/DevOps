@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@v2
         
       - name: run test workflow
-        uses: organizationGB/DevOps/blob/dev/.github/workflows/run_tests.yml@dev
+        uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
