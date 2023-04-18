@@ -11,7 +11,7 @@ ITU Minitwit application rewritten in GO with the Gin library.
 cd minitwit-go
 docker-compose up
 ```
-`docker-compose up` runs both the database and the server test
+`docker-compose up` runs both the database and the server
 
 
 If files have been changed, then instead run
