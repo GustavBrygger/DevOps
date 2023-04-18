@@ -6,7 +6,7 @@ networks:
 
 services:
   db:
-    container_name: minitwit_db
+    container_name: test_minitwit_db
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -23,7 +23,7 @@ services:
       - main
 
   server:
-    container_name: minitwit
+    container_name: test_minitwit
     build:
       context: .
       dockerfile: Dockerfile-minitwit
