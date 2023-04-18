@@ -1,4 +1,4 @@
-printf "temp:$(openssl passwd -crypt TEMP)\n" > .htpasswd
+printf "temp:$(openssl passwd -crypt temp)\n" > .htpasswd
 
 # Change permissions on filebeat config
 sudo chown root filebeat.yml 

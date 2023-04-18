@@ -3,9 +3,7 @@ source ~/.bash_profile
 cd /minitwit
 
 # Configure ELK stack
-printf "temp:$(openssl passwd -crypt TEMP)\n" > .htpasswd
-
-# Change permissions on filebeat config
+printf "temp:$(openssl passwd -crypt temp)\n" > .htpasswd
 sudo chown root filebeat.yml 
 sudo chmod go-w filebeat.yml
 
