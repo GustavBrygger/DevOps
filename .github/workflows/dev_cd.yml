@@ -1,4 +1,9 @@
 on:
+  workflow_run:
+    workflows: ["tests"]
+    branches: [dev]
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       logLevel:
