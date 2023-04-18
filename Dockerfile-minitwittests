@@ -1,14 +1,12 @@
-FROM python:3.7-alpine
+FROM python:latest
 
 RUN mkdir /minitwit-tests
+RUN pip install --upgrade pip
+RUN pip install psycopg2
+RUN pip install requests
 
-COPY minitwit_tests.py /minitwit-tests/
-COPY requirements.txt /minitwit-tests/
+COPY tests /tests
 
-WORKDIR /minitwit-tests
+WORKDIR /tests
 
-RUN pip install -r requirements.txt
 
-EXPOSE 5000
-
-ENTRYPOINT ["pytest", "-s", "minitwit_tests.py"]
