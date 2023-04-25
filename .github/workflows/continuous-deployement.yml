@@ -49,15 +49,15 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
 
-      - name: Build and push flagtoolimage
-        uses: docker/build-push-action@v2
-        with:
-          context: ./flag_tool
-          file: Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/flagtoolimage:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache,mode=max
+   #   - name: Build and push flagtoolimage
+   #     uses: docker/build-push-action@v2
+   #     with:
+   #       context: ./flag_tool
+   #       file: Dockerfile
+   #       push: true
+   #       tags: ${{ secrets.DOCKER_USERNAME }}/flagtoolimage:latest
+   #       cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
+   #       cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache,mode=max
       
     
       - name: Configure SSH
