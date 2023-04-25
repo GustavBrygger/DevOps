@@ -45,14 +45,9 @@ def init_db():
             conn.close()
             print('Database connection closed.')
 
-    
-    
-
-
 
 
 class TestStringMethods(unittest.TestCase):
-
 
     def test_will_always_be_true(self):
         self.assertEqual(True, True)

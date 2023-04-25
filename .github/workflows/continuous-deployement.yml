@@ -19,7 +19,11 @@ name: Continuous-Deployment
 # SSH_HOST
 
 jobs:
+  run-test-workflow:
+    uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
+  
   build:
+    needs: run-test-workflow
     runs-on: ubuntu-latest
 
     steps:
