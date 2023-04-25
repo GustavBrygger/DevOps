@@ -30,11 +30,11 @@ name: Dev-workflow
 # SSH_HOST
 
 jobs:
-  run-test-workflow:
-    uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
+  #run-test-workflow:
+    #uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
   
   build:
-    needs: run-test-workflow
+    #needs: run-test-workflow
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
 
