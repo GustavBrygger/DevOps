@@ -66,8 +66,8 @@ jobs:
       - name: Build and push flagtoolimage
         uses: docker/build-push-action@v2
         with:
-          context: ./flag_tool
-          file: Dockerfile
+          context: .
+          file: ./flag_tool/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/flagtoolimage:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
