@@ -5,7 +5,7 @@ RUN pip install --upgrade pip
 RUN pip install psycopg2
 RUN pip install requests
 
-COPY tests /tests
+COPY . /tests
 
 WORKDIR /tests
 
