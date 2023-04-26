@@ -33,7 +33,7 @@ services:
     container_name: minitwit
     build:
       context: .
-      dockerfile: Dockerfile-minitwit
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     restart: always
