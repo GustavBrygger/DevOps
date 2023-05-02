@@ -1,8 +1,6 @@
 source ~/.bash_profile
 
 cd /minitwit
-export DB_PASSWORD=$3
-
 echo "$3" > .env
 
 # Configure ELK stack
