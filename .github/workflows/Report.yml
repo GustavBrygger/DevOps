@@ -12,13 +12,6 @@ name: Report
 
 jobs:
 
-  Print:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print a message
-        run: echo "{{ github.workspace }}"
-
-
   build_latex:
     runs-on: ubuntu-latest
     steps:
