@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func getLocalConnectionString(dbPassword string) string {
+func getConnectionString(dbPassword string) string {
 	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "minitwit_db", "postgres", dbPassword, "postgres", 5432)
 }
 
@@ -37,7 +37,7 @@ func initDbConnection() *gorm.DB {
 		dbPassword := os.Getenv("DB_PASSWORD")
 		isAzure := os.Getenv("IS_AZURE")
 		if isAzure == "FALSE" {
-			conn, err := gorm.Open(postgres.Open(getLocalConnectionString("postgres")), &gorm.Config{})
+			conn, err := gorm.Open(postgres.Open(getConnectionString(dbPassword)), &gorm.Config{})
 			if err != nil {
 				log.Fatal("Failed to connect to prod database")
 			}
@@ -53,7 +53,7 @@ func initDbConnection() *gorm.DB {
 		return azureConn
 	}
 
-	localConn, err := gorm.Open(postgres.Open(getLocalConnectionString("postgres")), &gorm.Config{})
+	localConn, err := gorm.Open(postgres.Open(getConnectionString("temp")), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to local database")
 	}
