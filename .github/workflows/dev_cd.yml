@@ -99,7 +99,7 @@ jobs:
         run: >
           ssh $SSH_USER@$SSH_HOST
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
-          'bash /minitwit/deploy.sh'
+          'bash /minitwit/deploy.sh ${{ secrets.DB_PASSWORD }} ${{ secrets.LOGGING_PASSWORD}}'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
