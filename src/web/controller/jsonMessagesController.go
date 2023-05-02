@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"go-minitwit/src/application"
 	"go-minitwit/src/persistence"
 	"net/http"
@@ -9,10 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-var latest = map[string]int{
-	"latest": -1,
-}
 
 func MapJSONMessageEndpoints(router *gin.Engine) {
 	router.GET("/msgs", getNMessagesJSON)
@@ -70,14 +67,26 @@ func postMessageAsUser(context *gin.Context) {
 }
 
 func getLatest(context *gin.Context) {
-	latest_json, _ := json.Marshal(latest)
+	redisConn := persistence.GetRedisConnection()
+	latest, err := redisConn.Get("latest").Result()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	latestInt, _ := strconv.Atoi(latest)
+	latest_json, _ := json.Marshal(map[string]int{"latest":latestInt})
 	context.Writer.Write(latest_json)
 }
 
 func updateLatest(request *http.Request) {
 	latest_query, _ := strconv.ParseInt(request.URL.Query().Get("latest"), 10, 64)
+	redisConn := persistence.GetRedisConnection()
 
 	if latest_query != -1 {
-		latest["latest"] = int(latest_query)
+		err := redisConn.Set("latest", latest_query, 0).Err()
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 }

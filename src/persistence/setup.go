@@ -5,6 +5,7 @@ import (
 	"go-minitwit/src/application"
 	"os"
 
+	"github.com/go-redis/redis"
 	"log"
 
 	"gorm.io/driver/postgres"
@@ -19,6 +20,7 @@ func getAzureConnString(dbPassword string) string {
 }
 
 var db *gorm.DB = nil
+var redisDb *redis.Client = nil
 
 func GetDbConnection() *gorm.DB {
 	if db != nil {
@@ -26,6 +28,24 @@ func GetDbConnection() *gorm.DB {
 	}
 
 	return initDbConnection()
+}
+
+func GetRedisConnection() *redis.Client {
+	if redisDb != nil {
+		return redisDb
+	}
+
+	return initRedisConnection()
+}
+
+func initRedisConnection() *redis.Client {
+	redisDb = redis.NewClient(&redis.Options{
+		Addr:     "minitwit_redis:6379",
+		Password: "",
+		DB:       0,
+	})
+
+	return redisDb
 }
 
 func initDbConnection() *gorm.DB {
@@ -50,9 +70,9 @@ func initDbConnection() *gorm.DB {
 
 func ConfigurePersistence() {
 	db = initDbConnection()
-
+	redisDb = initRedisConnection()
 	applyMigrations(db)
-	seed(db)
+	seed(db, redisDb)
 }
 
 func applyMigrations(db *gorm.DB) {
