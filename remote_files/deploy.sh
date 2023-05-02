@@ -1,7 +1,9 @@
 source ~/.bash_profile
-export DB_PASSWORD=$3
 
 cd /minitwit
+export DB_PASSWORD=$3
+
+printf "$3\n" > .env
 
 # Configure ELK stack
 printf "$1:$(openssl passwd -crypt $2)\n" > .htpasswd
