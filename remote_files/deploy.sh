@@ -1,12 +1,9 @@
 source ~/.bash_profile
-export IS_PRODUCTION="TRUE"
-export IS_AZURE="FALSE"
-export DB_PASSWORD=$1
 
 cd /minitwit
 
 # Configure ELK stack
-printf "$2:$(openssl passwd -crypt $3)\n" > .htpasswd
+printf "$1:$(openssl passwd -crypt $2)\n" > .htpasswd
 sudo chown root filebeat.yml 
 sudo chmod go-w filebeat.yml
 

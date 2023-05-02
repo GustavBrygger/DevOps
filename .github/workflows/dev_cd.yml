@@ -92,20 +92,13 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
         continue-on-error: true
 
-      - name: Set production environment variables
-        run: >
-          ssh $SSH_USER@$SSH_HOST
-          -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no 'DB_PASSWORD=${{ secrets.DB_PASSWORD }} IS_PRODUCTION="TRUE" IS_AZURE="FALSE"'
-        env:
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-
       - name: Deploy to server
         # Configure the ~./bash_profile and deploy.sh file on the Vagrantfile
         run: >
           ssh $SSH_USER@$SSH_HOST
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
-          'bash /minitwit/deploy.sh ${{ secrets.DB_PASSWORD }} ${{ secrets.LOGGING_USERNAME }} ${{ secrets.LOGGING_PASSWORD}}'
+          'bash /minitwit/deploy.sh ${{ secrets.LOGGING_USERNAME }} ${{ secrets.LOGGING_PASSWORD}}'
+          'bash /minitwit/deploy.sh ${{ secrets.LOGGING_USERNAME }} ${{ secrets.LOGGING_PASSWORD}}'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}

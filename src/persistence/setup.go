@@ -53,7 +53,7 @@ func initDbConnection() *gorm.DB {
 		return azureConn
 	}
 
-	localConn, err := gorm.Open(postgres.Open(getConnectionString("temp")), &gorm.Config{})
+	localConn, err := gorm.Open(postgres.Open(getConnectionString("postgres")), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to local database")
 	}
