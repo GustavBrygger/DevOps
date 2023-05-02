@@ -98,7 +98,6 @@ jobs:
           ssh $SSH_USER@$SSH_HOST
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
           'bash /minitwit/deploy.sh ${{ secrets.LOGGING_USERNAME }} ${{ secrets.LOGGING_PASSWORD}}'
-          'bash /minitwit/deploy.sh ${{ secrets.LOGGING_USERNAME }} ${{ secrets.LOGGING_PASSWORD}}'
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}

@@ -32,7 +32,6 @@ func GetDbConnection() *gorm.DB {
 
 func initDbConnection() *gorm.DB {
 	isProduction := os.Getenv("IS_PRODUCTION")
-	print(isProduction)
 	if isProduction == "TRUE" {
 		dbPassword := os.Getenv("DB_PASSWORD")
 		isAzure := os.Getenv("IS_AZURE")

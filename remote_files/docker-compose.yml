@@ -28,9 +28,9 @@ services:
     container_name: minitwit
     image: ${DOCKER_USERNAME}/minitwitimage
     environment:
+      - DB_PASSWORD
       - IS_PRODUCTION=TRUE
       - IS_AZURE=FALSE
-      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - "8080:8080"
     restart: always
