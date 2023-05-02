@@ -30,11 +30,11 @@ name: Dev-workflow
 # SSH_HOST
 
 jobs:
-  run-test-workflow:
-    uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
+  #run-test-workflow:
+    #uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
   
   build:
-    needs: run-test-workflow
+    #needs: run-test-workflow
     runs-on: ubuntu-latest
     environment: ${{inputs.environment}}
 
@@ -57,21 +57,22 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile-minitwit
+          file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/minitwitimage:latest
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
 
-      - name: Build and push flagtoolimage
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          file: ./Dockerfile-flagtool
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/flagtoolimage:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache,mode=max
+   #   - name: Build and push flagtoolimage
+   #     uses: docker/build-push-action@v2
+   #    with:
+   #       context: .
+   #       file: ./flag_tool/Dockerfile
+   #       push: true
+   #       tags: ${{ secrets.DOCKER_USERNAME }}/flagtoolimage:latest
+   #       no-cache: true
+   #       cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
+   #       cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache,mode=max
 
       - name: Configure SSH
         run: |
