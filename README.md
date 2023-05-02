@@ -19,6 +19,20 @@ If files have been changed, then instead run
 docker-compose up --build
 ```
 
+  
+## ENV file from github actions secret to Go 
+  1. In the workflow file pass on the enviroment:
+   env:
+      DB_USER: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  2. In the docker-compose file you can now access these by setting enviroment:
+      environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+  3. These can be accesed in GO by:
+    postgres_user := os.Getenv("POSTGRES_USER")
+    postgres_psw := os.Getenv("POSTGRES_PASSWORD")
+  
 
 
 
