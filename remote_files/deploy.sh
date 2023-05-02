@@ -9,7 +9,7 @@ sudo chown root filebeat.yml
 sudo chmod go-w filebeat.yml
 
 docker-compose -f docker-compose.yml pull
-docker-compose -f docker-compose.yml up -d -e DB_PASSWORD=$3
+DB_PASSWORD=$3 docker-compose -f docker-compose.yml up -d
 docker-compose restart prometheus
 docker-compose restart grafana
 
