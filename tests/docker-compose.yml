@@ -27,6 +27,9 @@ services:
     build:
       context: ../
       dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "8080:8080"
     restart: always
