@@ -11,19 +11,22 @@ on:
 name: Report
 
 jobs:
+  build:
 
-  build_latex:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Set up Git repository
-        uses: actions/checkout@v3
-      - name: Compile LaTeX document
-        uses: xu-cheng/latex-action@v2
-        with:
-          working_directory: ${{github.workspace}}/Report
-          root_file: main.tex
-      - name: Upload PDF file
-        uses: actions/upload-artifact@v3
-        with:
-          name: PDF
-          path: Report.pdf
+    - uses: actions/checkout@v2
+    - name: Set up LaTeX
+      uses: docker://danteev/texlive:full
+      with:
+        entrypoint: /bin/sh
+        args: -c "tlmgr update --self && tlmgr install latexmk"
+    - name: Build LaTeX document
+      run: latexmk -pdf -interaction=nonstopmode -synctex=1 Report/main.tex
+    - name: Upload PDF artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: document
+        path: document.pdf
+
