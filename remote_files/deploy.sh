@@ -1,4 +1,8 @@
 source ~/.bash_profile
+printf $1
+export IS_PRODUCTION="TRUE"
+export IS_AZURE="FALSE"
+export DB_PASSWORD=$1
 
 cd /minitwit
 
