@@ -12,6 +12,10 @@ import (
 	"gorm.io/gorm"
 )
 
+func getConnectionString(dbPassword string) string {
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "minitwit_db", "postgres", dbPassword, "postgres", 5432)
+}
+
 func getAzureConnString(dbPassword string) string {
 	return fmt.Sprintf("sqlserver://%s:%s@minitwit-db.database.windows.net:1433?database=minitwit-db", "minitwit", dbPassword)
 }
@@ -30,25 +34,27 @@ func initDbConnection() *gorm.DB {
 	isProduction := os.Getenv("IS_PRODUCTION")
 	if isProduction == "TRUE" {
 		dbPassword := os.Getenv("DB_PASSWORD")
+		isAzure := os.Getenv("IS_AZURE")
+		if isAzure == "FALSE" {
+			conn, err := gorm.Open(postgres.Open(getConnectionString(dbPassword)), &gorm.Config{})
+			if err != nil {
+				log.Fatal("Failed to connect to prod database")
+			}
+
+			return conn
+		}
+
 		azureConn, err := gorm.Open(sqlserver.Open(getAzureConnString(dbPassword)), &gorm.Config{})
 		if err != nil {
-			log.Fatal("Failed to connect to database")
+			log.Fatal("Failed to connect to azure database")
 		}
 
 		return azureConn
 	}
 
-	// Retrieve the value of the "Postgres" environment variables
-	postgres_user := os.Getenv("POSTGRES_USER")
-	fmt.Println("POSTGRES_USER =", postgres_user)
-
-	postgres_psw := os.Getenv("POSTGRES_PASSWORD")
-	fmt.Println("POSTGRES_PASSWORD =", postgres_psw)
-
-	var localConnectionString = fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "minitwit_db", "postgres", "postgres", "postgres", 5432)
-	localConn, err := gorm.Open(postgres.Open(localConnectionString), &gorm.Config{})
+	localConn, err := gorm.Open(postgres.Open(getConnectionString("postgres")), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect to database")
+		log.Fatal("Failed to connect to local database")
 	}
 
 	return localConn
