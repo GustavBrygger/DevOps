@@ -34,11 +34,14 @@ name: Test
 jobs:
   tests:
     runs-on: ubuntu-latest  
+    env:
+      DB_USER: ${{ secrets.TEST_SECRET }}
+      DB_PASSWORD: ${{ secrets.TEST_SECRET }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: build and run
         run: | 
-          docker-compose -f docker-compose-test.yml up -d
-          docker-compose -f docker-compose-test.yml run test python3 minitwit_tests.py
+          docker-compose -f ./tests/docker-compose.yml up -d
+          docker-compose -f ./tests/docker-compose.yml run test python3 minitwit_tests.py

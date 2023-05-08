@@ -25,8 +25,11 @@ services:
   server:
     container_name: minitwit
     build:
-      context: .
-      dockerfile: Dockerfile-minitwit
+      context: ../
+      dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "8080:8080"
     restart: always
@@ -47,7 +50,7 @@ services:
     container_name: test
     build:
       context: .
-      dockerfile: Dockerfile-minitwittests
+      dockerfile: Dockerfile
     networks:
     - main
     depends_on:
