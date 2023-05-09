@@ -1,17 +1,27 @@
 package persistence
 
 import (
+	"fmt"
 	"go-minitwit/src/application"
 	"go-minitwit/src/util"
 
+	"github.com/go-redis/redis"
 	"gorm.io/gorm"
 )
 
-func seed(db *gorm.DB) {
+func seed(db *gorm.DB, redisDb *redis.Client) {
 	var users []application.User
 	result := db.Find(&users)
 	if result.RowsAffected == 0 {
 		addUsersAndMessages(db)
+	}
+
+	keyCount, _ := redisDb.DBSize().Result()
+	if keyCount == 0 {
+		err := redisDb.Set("latest", -1, 0).Err()
+		if err != nil {
+			fmt.Print(err)
+		}
 	}
 }
 
