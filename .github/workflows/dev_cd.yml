@@ -2,20 +2,20 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'
+        description: "Log level"
         required: true
-        default: 'warning'
+        default: "warning"
         type: choice
         options:
-        - info
-        - warning
-        - debug
+          - info
+          - warning
+          - debug
       tags:
-        description: 'Test scenario tags'
+        description: "Test scenario tags"
         required: false
         type: boolean
       environment:
-        description: 'Environment to run tests against'
+        description: "Environment to run tests against"
         type: environment
         required: true
 
@@ -31,8 +31,8 @@ name: Dev-workflow
 
 jobs:
   #run-test-workflow:
-    #uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
-  
+  #uses: organizationGB/DevOps/.github/workflows/run_tests.yml@dev
+
   build:
     #needs: run-test-workflow
     runs-on: ubuntu-latest
@@ -41,8 +41,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
-
 
       - name: Login to Docker Hub
         uses: docker/login-action@v1
@@ -63,16 +61,16 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache
           cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/minitwitimage:webbuildcache,mode=max
 
-   #   - name: Build and push flagtoolimage
-   #     uses: docker/build-push-action@v2
-   #    with:
-   #       context: .
-   #       file: ./flag_tool/Dockerfile
-   #       push: true
-   #       tags: ${{ secrets.DOCKER_USERNAME }}/flagtoolimage:latest
-   #       no-cache: true
-   #       cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
-   #       cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache,mode=max
+      #   - name: Build and push flagtoolimage
+      #     uses: docker/build-push-action@v2
+      #    with:
+      #       context: .
+      #       file: ./flag_tool/Dockerfile
+      #       push: true
+      #       tags: ${{ secrets.DOCKER_USERNAME }}/flagtoolimage:latest
+      #       no-cache: true
+      #       cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache
+      #       cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/flagtoolimage:flagtoolbuildcache,mode=max
 
       - name: Configure SSH
         run: |
@@ -81,7 +79,7 @@ jobs:
           chmod 600 ~/.ssh/minitwit.key
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
-        
+
       - name: Install ssh client
         run: sudo apt-get install -y openssh-client
 
@@ -99,7 +97,8 @@ jobs:
         run: >
           ssh $SSH_USER@$SSH_HOST
           -i ~/.ssh/minitwit.key -o StrictHostKeyChecking=no
-          'bash /minitwit/deploy.sh'
+          'bash /minitwit/deploy.sh ${{ secrets.LOGGING_USERNAME }} ${{ secrets.LOGGING_PASSWORD}} ${{ secrets.DB_PASSWORD}}'
         env:
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
