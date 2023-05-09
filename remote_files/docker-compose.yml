@@ -10,6 +10,8 @@ volumes:
     external: false
   elk_elasticsearch_data:
   kibanadata:
+  redis_data:
+    driver: local
 
 services:
   db:
@@ -40,6 +42,17 @@ services:
       - db
       - grafana
       - prometheus
+
+  redis:
+    container_name: minitwit_redis
+    image: redis:6.0-rc1
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - main
 
   # Monitoring
   prometheus:
