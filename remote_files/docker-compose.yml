@@ -20,7 +20,7 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${secrets.DB_PASSWORD}
+      - POSTGRES_PASSWORD=${DEV_ENV.DB_PASSWORD}
     ports:
       - '5432:5432'
     volumes:
@@ -30,7 +30,7 @@ services:
     container_name: minitwit
     image: ${DOCKER_USERNAME}/minitwitimage
     environment:
-      - DB_PASSWORD=${secrets.DB_PASSWORD}
+      - DB_PASSWORD=${DEV_ENV.DB_PASSWORD}
       - IS_PRODUCTION=TRUE
       - IS_AZURE=FALSE
     ports:
