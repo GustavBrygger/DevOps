@@ -80,11 +80,11 @@ func getLatest(context *gin.Context) {
 }
 
 func updateLatest(request *http.Request) {
-	latest_query, _ := strconv.ParseInt(request.URL.Query().Get("latest"), 10, 64)
+	latestQuery, _ := strconv.ParseInt(request.URL.Query().Get("latest"), 10, 64)
 	redisConn := persistence.GetRedisConnection()
 
-	if latest_query != -1 {
-		err := redisConn.Set("latest", latest_query, 0).Err()
+	if latestQuery != -1 {
+		err := redisConn.Set("latest", latestQuery, 0).Err()
 		if err != nil {
 			fmt.Println(err)
 		}
