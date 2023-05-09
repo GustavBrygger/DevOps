@@ -25,8 +25,7 @@ jobs:
   build:
     needs: run-test-workflow
     runs-on: ubuntu-latest
-    environment: DEV_ENV
-
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v2
