@@ -16,8 +16,8 @@ func seed(db *gorm.DB, redisDb *redis.Client) {
 		addUsersAndMessages(db)
 	}
 
-	key_count, _ := redisDb.DBSize().Result()
-	if key_count == 0 {
+	keyCount, _ := redisDb.DBSize().Result()
+	if keyCount == 0 {
 		err := redisDb.Set("latest", -1, 0).Err()
 		if err != nil {
 			fmt.Print(err)
