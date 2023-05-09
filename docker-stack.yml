@@ -1,0 +1,54 @@
+version: '3.8'
+
+volumes:
+  mysql_data:
+
+services:
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8888:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  loadbalancer:
+    image: nginx
+    ports:
+      - '80:80'
+    volumes:
+      - /loadbalancer:/etc/nginx/conf.d
+    deploy:
+      replicas: 2
+      placement:
+        max_replicas_per_node: 1
+
+  minitwitimage:
+    image: bjarkedc/minitwitimage
+    ports:
+      - '8080:8080'
+    deploy:
+      replicas: 2
+      placement:
+        max_replicas_per_node: 1
+    
+  db:
+    container_name: minitwit_db
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+
+volumes:
+  db:
+    driver: local
