@@ -75,8 +75,8 @@ func getLatest(context *gin.Context) {
 	}
 
 	latestInt, _ := strconv.Atoi(latest)
-	latest_json, _ := json.Marshal(map[string]int{"latest":latestInt})
-	context.Writer.Write(latest_json)
+	latestJson, _ := json.Marshal(map[string]int{"latest":latestInt})
+	context.Writer.Write(latestJson)
 }
 
 func updateLatest(request *http.Request) {
