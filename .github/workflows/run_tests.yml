@@ -8,7 +8,7 @@ on:
     types: [opened, reopened]
     branches:
       - main
-      - testPipeline
+      - dev
   workflow_dispatch:
     inputs:
       logLevel:
@@ -35,8 +35,8 @@ jobs:
   tests:
     runs-on: ubuntu-latest  
     env:
-      DB_USER: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USER: ${{ secrets.TEST_SECRET }}
+      DB_PASSWORD: ${{ secrets.TEST_SECRET }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
