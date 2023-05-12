@@ -12,7 +12,7 @@ rows+=$(terraform output -json minitwit-swarm-manager-ip-address | jq -r .[])
 rows+=' '
 rows+=$(terraform output -json minitwit-swarm-worker-ip-address | jq -r .[])
 rows+=' '
-rows+=$(terraform output -json minitwit-swarm-db-ip-address | jq -r .[])
+rows+=$(terraform output -json minitwit-swarm-elastic-ip-address | jq -r .)
 
 for ip in $rows; do
     sed -i "/upstream backend {/a server $ip:8080;" $output_file

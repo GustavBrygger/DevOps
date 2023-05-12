@@ -49,6 +49,18 @@ services:
     deploy:
       replicas: 1
 
+  redis:
+    container_name: minitwit_redis
+    image: redis:6.0-rc1
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+
 volumes:
   db:
+    driver: local
+  redis_data:
     driver: local

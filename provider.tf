@@ -12,16 +12,16 @@ variable "pvt_key" {}
 
 # setup the provider
 terraform {
-        required_providers {
-                digitalocean = {
-                        source = "digitalocean/digitalocean"
-                        version = "~> 2.8.0"
-                }
-                null = {
-                        source = "hashicorp/null"
-                        version = "3.1.0"
-                }
-        }
+  required_providers {
+    digitalocean = {
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.8.0"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = "3.1.0"
+    }
+  }
 }
 
 provider "digitalocean" {

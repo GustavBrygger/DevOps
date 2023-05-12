@@ -13,7 +13,7 @@ rows+=$(terraform output -json minitwit-swarm-manager-ip-address | jq -r .[])
 rows+=' '
 rows+=$(terraform output -json minitwit-swarm-worker-ip-address | jq -r .[])
 rows+=' '
-rows+=$(terraform output -json minitwit-swarm-db-ip-address | jq -r .[])
+rows+=$(terraform output -json minitwit-swarm-db-elastic-address | jq -r .)
 
 # scp the file
 for ip in $rows; do

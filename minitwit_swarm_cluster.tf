@@ -20,7 +20,7 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
     host        = self.ipv4_address
     type        = "ssh"
     private_key = file(var.pvt_key)
-    timeout     = "2m"
+    #timeout     = "2m"
   }
 
   provisioner "file" {
@@ -46,7 +46,7 @@ resource "digitalocean_droplet" "minitwit-swarm-leader" {
 
   # save the worker join token
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > temp/worker_token"
+    command = "sleep 20; ssh -o 'StrictHostKeyChecking no' root@${self.ipv4_address} -i ssh_key/terraform 'docker swarm join-token worker -q' > temp/worker_token"
   }
 
   # save the manager join token
@@ -163,10 +163,10 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
 
 
 # DB droplet in terraform.
-resource "digitalocean_droplet" "minitwit-swarm-db" {
+resource "digitalocean_droplet" "minitwit-swarm-elastic" {
   depends_on = [digitalocean_droplet.minitwit-swarm-leader]
   image      = "docker-18-04"
-  name       = "minitwit-swarm-db"
+  name       = "minitwit-swarm-elastic"
   region     = var.region
   size       = "s-1vcpu-1gb"
   ssh_keys   = [digitalocean_ssh_key.minitwit.fingerprint]
@@ -196,12 +196,13 @@ resource "digitalocean_droplet" "minitwit-swarm-db" {
       "ufw allow 8888",
 
       # join swarm cluster as workers
-      "docker swarm join --token $(cat worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+      "docker swarm join --token $(cat worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}",
 
       # Add the node label for the DB worker
-      #"sleep 20", # Give some time for the node to join the swarm
-      #"NODE_ID=$(docker node ls -q -f name=minitwit-swarm-db)",
+      "sleep 10", # Give some time for the node to join the swarm
+      "NODE_ID=$(docker node ls -f name=minitwit-swarm-elastic --format '{{.ID}}')",
       #"docker node update --label-add db=true $NODE_ID"
+      "docker node update --label-add elastic $NODE_ID"
     ]
   }
 }
@@ -219,5 +220,5 @@ output "minitwit-swarm-worker-ip-address" {
 }
 
 output "minitwit-swarm-db-ip-address" {
-  value = digitalocean_droplet.minitwit-swarm-db.ipv4_address
+  value = digitalocean_droplet.minitwit-swarm-elastic.ipv4_address
 }
