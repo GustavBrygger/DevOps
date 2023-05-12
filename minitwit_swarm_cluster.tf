@@ -168,7 +168,7 @@ resource "digitalocean_droplet" "minitwit-swarm-elastic" {
   image      = "docker-18-04"
   name       = "minitwit-swarm-elastic"
   region     = var.region
-  size       = "s-1vcpu-1gb"
+  size       = "s-1vcpu-2gb"
   ssh_keys   = [digitalocean_ssh_key.minitwit.fingerprint]
 
   connection {
@@ -196,13 +196,25 @@ resource "digitalocean_droplet" "minitwit-swarm-elastic" {
       "ufw allow 8888",
 
       # join swarm cluster as workers
-      "docker swarm join --token $(cat worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}",
+      "docker swarm join --token $(cat worker_token) ${digitalocean_droplet.minitwit-swarm-leader.ipv4_address}"
+    ]
+  }
+}
 
-      # Add the node label for the DB worker
-      "sleep 10", # Give some time for the node to join the swarm
-      "NODE_ID=$(docker node ls -f name=minitwit-swarm-elastic --format '{{.ID}}')",
-      #"docker node update --label-add db=true $NODE_ID"
-      "docker node update --label-add elastic $NODE_ID"
+# null_resource to wait for SSH connection
+resource "null_resource" "label_elastic" {
+  depends_on = [digitalocean_droplet.minitwit-swarm-elastic]
+  connection {
+    type        = "ssh"
+    user        = "root"
+    host        = digitalocean_droplet.minitwit-swarm-leader.ipv4_address
+    private_key = file(var.pvt_key)
+    timeout     = "2m"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "docker node update --label-add elastic $(docker node ls -f name=minitwit-swarm-elastic --format '{{.ID}}')"
     ]
   }
 }
@@ -219,6 +231,6 @@ output "minitwit-swarm-worker-ip-address" {
   value = digitalocean_droplet.minitwit-swarm-worker.*.ipv4_address
 }
 
-output "minitwit-swarm-db-ip-address" {
+output "minitwit-swarm-elastic-ip-address" {
   value = digitalocean_droplet.minitwit-swarm-elastic.ipv4_address
 }
