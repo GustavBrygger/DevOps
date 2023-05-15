@@ -162,7 +162,7 @@ resource "digitalocean_droplet" "minitwit-swarm-worker" {
 }
 
 
-# DB droplet in terraform.
+# elastic droplet in terraform.
 resource "digitalocean_droplet" "minitwit-swarm-elastic" {
   depends_on = [digitalocean_droplet.minitwit-swarm-leader]
   image      = "docker-18-04"
@@ -214,7 +214,7 @@ resource "null_resource" "label_elastic" {
 
   provisioner "remote-exec" {
     inline = [
-      "docker node update --label-add elastic $(docker node ls -f name=minitwit-swarm-elastic --format '{{.ID}}')"
+      "docker node update --label-add elastic=true $(docker node ls -f name=minitwit-swarm-elastic --format '{{.ID}}')"
     ]
   }
 }

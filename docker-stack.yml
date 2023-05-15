@@ -1,8 +1,5 @@
 version: '3.8'
 
-volumes:
-  mysql_data:
-
 services:
 
   visualizer:
@@ -19,12 +16,18 @@ services:
     image: nginx
     ports:
       - '80:80'
+      - '9200:9200'
+      - '5601:5601'
     volumes:
       - /loadbalancer:/etc/nginx/conf.d
+    secrets:
+      - source: nginx_htpass
+        target: /etc/nginx/.htpasswd
     deploy:
       replicas: 2
       placement:
-        max_replicas_per_node: 1
+          constraints: [node.labels.elastic != true ]
+          max_replicas_per_node: 1    
 
   minitwitimage:
     image: bjarkedc/minitwitimage
@@ -33,21 +36,54 @@ services:
     deploy:
       replicas: 2
       placement:
-        max_replicas_per_node: 1
-    
+          constraints: [node.labels.elastic != true ]
+          max_replicas_per_node: 1    
+
   db:
     container_name: minitwit_db
     image: postgres:14.1-alpine
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
     deploy:
       replicas: 1
+      placement:
+          constraints: [node.labels.elastic != true ]    
+  
+    # Logging
+  elasticsearch:
+    image: "docker.elastic.co/elasticsearch/elasticsearch:8.6.2"
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "discovery.type=single-node"
+      - "xpack.security.enabled=false"
+    volumes:
+      - elk_elasticsearch_data:/usr/share/elasticsearch/data  
+    deploy:
+      replicas: 1
+      placement:
+          constraints: [node.labels.elastic == true ]
+
+  kibana:
+    image: "docker.elastic.co/kibana/kibana:8.6.2"
+    environment:
+      - "elasticsearch.hosts='[\"http://minitwit_elasticsearch:9200\"]'"
+      - "xpack.security.enabled=false"
+    networks:
+      minitwit_elk:
+        aliases:
+          - kibana
+    volumes:
+      - kibanadata:/usr/share/kibana/data
+    deploy:
+      replicas: 1
+      placement:
+          constraints: [node.labels.elastic == true]
 
   redis:
     container_name: minitwit_redis
@@ -57,10 +93,25 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    deploy:
+      replicas: 1
+      placement:
+          constraints: [node.labels.elastic != true]      
+
+networks:
+  minitwit_elk:
+
+secrets:
+  nginx_htpass:
+    file: ./.htpasswd
 
 
 volumes:
   db:
+    driver: local
+  elk_elasticsearch_data:
+    driver: local
+  kibanadata:
     driver: local
   redis_data:
     driver: local
