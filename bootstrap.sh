@@ -5,9 +5,7 @@ echo -e "\n--> Bootstrapping Minitwit\n"
 echo -e "\n--> Loading environment variables from secrets file\n"
 source secrets
 
-username=$1
-password=$2
-db_password=$3
+db_password=$1
 
 echo -e "\n--> Checking that environment variables are set\n"
 # check that all variables are set
@@ -15,8 +13,6 @@ echo -e "\n--> Checking that environment variables are set\n"
 [ -z "$SPACE_NAME" ] && echo "SPACE_NAME is not set" && exit
 [ -z "$STATE_FILE" ] && echo "STATE_FILE is not set" && exit
 [ -z "$AWS_ACCESS_KEY_ID" ] && echo "AWS_ACCESS_KEY_ID is not set" && exit
-[ -z "$username" ] && echo "username for elastic and kibana is not set" && exit
-[ -z "$password" ] && echo "username for elastic and kibana is not set" && exit
 [ -z "$db_password" ] && echo "db_password is not set" && exit
 
 echo -e "\n--> Initializing terraform\n"
@@ -43,13 +39,13 @@ bash scripts/gen_load_balancer_config.sh
 echo -e "\n--> Copying loadbalancer configuration to nodes\n"
 bash scripts/scp_load_balancer_config.sh
 
-# Set elasticseach password
-echo -e "\n--> Setting elasticsearch password\n"
-ssh \
-    -o 'StrictHostKeyChecking no' \
-    root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
-    -i ssh_key/terraform \
-    "printf "test:test\n" > .htpasswd; echo 'export DB_PASSWORD=$3' >> ~/.bashrc && source ~/.bashrc;"
+# # Set elasticseach password
+# echo -e "\n--> Setting elasticsearch password\n"
+# ssh \
+#     -o 'StrictHostKeyChecking no' \
+#     root@$(terraform output -raw minitwit-swarm-leader-ip-address) \
+#     -i ssh_key/terraform \
+#     "echo 'export DB_PASSWORD=$1' >> ~/.bashrc && source ~/.bashrc;"
 
 # # configue docker stack
 # echo -e "\n--> Setting elasticsearch password\n"

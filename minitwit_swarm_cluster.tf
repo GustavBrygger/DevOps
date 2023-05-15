@@ -168,7 +168,7 @@ resource "digitalocean_droplet" "minitwit-swarm-elastic" {
   image      = "docker-18-04"
   name       = "minitwit-swarm-elastic"
   region     = var.region
-  size       = "s-1vcpu-2gb"
+  size       = "s-2vcpu-4gb"
   ssh_keys   = [digitalocean_ssh_key.minitwit.fingerprint]
 
   connection {
