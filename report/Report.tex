@@ -36,10 +36,21 @@
 
 \include{report/title}
 
+\pagenumbering{gobble} % Remove page numbering
+\newpage
+
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
 %----------------------------------------------------------------------------------------
 %	REPORT
 %----------------------------------------------------------------------------------------
 
 \input{report/sections/1_Introduction.tex}
+\input{report/sections/2_System_perspective.tex}
+\input{report/sections/3_Process_perspective.tex}
+\input{report/sections/4_Lessons_learned_perspective.tex}
 
 \end{document}
