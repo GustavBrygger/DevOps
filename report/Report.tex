@@ -1,0 +1,117 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc} % for UTF-8 support
+\usepackage[T1]{fontenc} % for font encoding
+\usepackage{lipsum} % for sample text
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[backend=biber]{biblatex}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[english]{babel}
+\usepackage[toc,page]{appendix}
+\usepackage[toc,acronym,section]{glossaries} % Acronyms in a nice way
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{csquotes}
+\usepackage{titlesec}
+
+\titleformat*{\section}{\LARGE\bfseries}
+\titleformat*{\subsection}{\Large\bfseries}
+\titleformat*{\subsubsection}{\large\bfseries}
+\titleformat*{\paragraph}{\large\bfseries}
+\titleformat*{\subparagraph}{\large\bfseries}
+
+\usepackage[a4paper,
+            bindingoffset=0.2in,
+            left=1in,
+            right=1in,
+            top=1in,
+            bottom=1in,
+            footskip=.25in]{geometry}
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	FRONTPAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} 
+\center
+
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\includegraphics[scale=0.15]{images/ITU.jpg}\\[3cm]
+
+\textsc{\LARGE DevOps, Software Evolution and Software Maintenance (Spring 2023)}\\[0.5cm] % Major heading such as course name
+Course Code: KSDSESM1KU\\[1cm]
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.8cm]
+{ \huge \bfseries Exam project: MiniTwit }\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}{0.6\textwidth}
+    \center
+    \emph{Students:}\\
+    Gustav Vilain Brygger - gubr@itu.dk \\
+    Niklas Brynfeldt - nbry@itu.dk \\
+    Bjarke Dalhoff Christensen - bjch@itu.dk \\
+    Oliver Simon Jarvis - ojar@itu.dk \\
+    Amanda Rasille Røn Volf - amav@itu.dk \\
+
+\end{minipage}\\[2cm]
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+{\large \today}\\[2cm]
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+
+%----------------------------------------------------------------------------------------
+%	REPORT
+%----------------------------------------------------------------------------------------
+
+%\maketitle
+
+\section{Introduction}
+
+\lipsum[1]
+
+\section{Methodology}
+
+\lipsum[2]
+
+\section{Results}
+
+\lipsum[3]
+\section{Security assessment}
+From our security assessment we worked on blocking the risks with the highest likelihood. The first is \textit{An attacker could gain unauthorized access to the codebase}
+- An attacker could easily find passwords and usernames in our public codebase. Now these are in github secrets such that an adversary cannot just 
+find these at the public codebase. Another precaution would be to work with the risk \textit{Weak authentication and authorization mechanisms}
+ - We are using default values such as postgres as username and password for the database. These should ofc be changed to something following the
+ new security protocols standards. 
+
+
+\section{Conclusion}
+
+\lipsum[4]
+
+\end{document}
