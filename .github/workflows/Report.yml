@@ -20,7 +20,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: report/Report.tex
+          root_file: Report.tex
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
         with: 
