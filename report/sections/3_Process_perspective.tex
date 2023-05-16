@@ -20,18 +20,18 @@ Our CI/CD chain consists of the following workflows:
 The project only consists of a single repository containing the application. This repository contains several folders, 
 each containing different files: \\
 
-\renewcommand{\arraystretch}{2}
+\renewcommand{\arraystretch}{3}
 \begin{table}[H]
     \centering
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|l|}
     \hline
-    \textbf{.github/workflows} & Contains all our workflow files used with Github Actions.                                                                                                          \\ \hline
-    \textbf{api\_test}         & Includes files to run the simulator and a test of the API. Primarily used during development of the endpoints.                                                     \\ \hline
-    \textbf{remote\_files}     & Has all files that are used when deploying to the server. This includes various logging and monitoring files, our deploy script, and the docker-compose file.      \\ \hline
-    \textbf{report}            & This folder is where our report files are saved.                                                                                                                   \\ \hline
-    \textbf{src}               & Contains all our application code which is further divided into subfolders, thereby separating the logic of the system.                                            \\ \hline
-    \textbf{tests}             & Our test files are located in this folder. It contains a Docker file, docker-compose file, and a test file such that we can run our tests without external impact. \\ \hline
+    \Large\textbf{.github/workflows} & \Large Contains all our workflow files used with Github Actions.                                                                                                          \\ \hline
+    \Large\textbf{api\_test}         & \Large Includes files to run the simulator and a test of the API. Primarily used during the development of the endpoints.                                                     \\ \hline
+    \Large\textbf{remote\_files}     & \Large Has all files that are used when deploying to the server. This includes various logging and monitoring files, \\ & \Large our deploy script, and the docker-compose file.      \\ \hline
+    \Large\textbf{report}            & \Large This folder is where our report files are saved.                                                                                                                   \\ \hline
+    \Large\textbf{src}               & \Large Contains all our application code which is further divided into subfolders, thereby separating the logic \\ & \Large of the system.                                            \\ \hline
+    \Large\textbf{tests}             & \Large Our test files are located in this folder. It contains a Docker file, docker-compose file, and a test file to \\ &  \Large run our tests without external impact. \\ \hline
     \end{tabular}%
     }
     \caption{Repository folders}
