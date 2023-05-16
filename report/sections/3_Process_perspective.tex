@@ -22,6 +22,7 @@ each containing different files: \\
 
 \begin{table}[]
     \centering
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|l|}
     \hline
     \textbf{.github/workflows} & Contains all our workflow files used with Github Actions.                                                                                                          \\ \hline
@@ -30,24 +31,38 @@ each containing different files: \\
     \textbf{report}            & This folder is where our report files are saved.                                                                                                                   \\ \hline
     \textbf{src}               & Contains all our application code which is further divided into subfolders, thereby separating the logic of the system.                                            \\ \hline
     \textbf{tests}             & Our test files are located in this folder. It contains a Docker file, docker-compose file, and a test file such that we can run our tests without external impact. \\ \hline
-    \end{tabular}
+    \end{tabular}%
+    }
     \caption{Repository folders}
     \label{tab:repo_folders}
     \end{table}
 
 \subsection{Branching strategy}
-We used two different branches as a static part of our branching strategy throughout the development of the project. 
+We used two static branches as part of our branching strategy throughout the development of the project. 
 The main branch was used as our primary branch on which only functioning and tested code was meant to be pushed. It was
-also the code on this branch we used to deploy our application. 
+also the code on this branch we deployed on our main server. The other branch was the dev branch. This was used for 
+development and testing. Additional branches were created when new functionality should be implemented, or bugs had to be
+fixed. All these temporary branches were derived from the main branch. Our general branching strategy and an example where
+we have used this in Github can be seen in figure \ref{fig:gen_branch} and \ref{fig:ex_branch}, respectively:
 
 \begin{figure}[H]
     \centering
     \captionsetup{justification=centering,margin=1cm}
     \includegraphics[width=0.8\linewidth]{report/images/branching.png}
-    \caption{Branching strategy}
-    \label{fig:minitwit}
+    \caption{General branching strategy}
+    \label{fig:gen_branch}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \captionsetup{justification=centering,margin=1cm}
+    \includegraphics[width=0.8\linewidth]{report/images/git_branching.png}
+    \caption{Example use of branching strategy}
+    \label{fig:ex_branch}
+\end{figure}
+
+It can be seem that the temporary branches are derived from the main branch, and when the functionality is implemented, 
+it is merged into the dev branch to be tested. 
 
 \subsection{Development process and tools}
 %https://dazzling-screen-208.notion.site/0d2059fc70b34671a8cd3f4f733d4909?v=0b5db8d8c829404e8ae96bb76ca5e6b7
