@@ -10,9 +10,7 @@ We functioned as a cross functional team, sometimes working alone and other time
 Our CI/CD chain consists of the followin workflows:
 \begin{itemize}
     \item Continuous-deployement - Deploy the code of the main branch to production using docker, ssh onto the server where we run our own deployment script.
-    \item[]  - Stages docker and ssh
     \item Dev - same as our Continuous-deployement workflow but just to another server.
-    \item[]  - Stages docker and ssh
     \item Test - Runs the test dockercompose file which create a closed enviroment with the code on the current branch and runs the test.
     \item Main Release - This uses an extern workflow namely \textit{rymndhng/release-on-push-action@master} for creating a release.
     \item Lint - Uses the external workflow 'golangci/golangci-lint-action@v3'
