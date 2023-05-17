@@ -5,8 +5,9 @@ import (
 	"go-minitwit/src/application"
 	"os"
 
-	"github.com/go-redis/redis"
 	"log"
+
+	"github.com/go-redis/redis"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlserver"
@@ -14,7 +15,7 @@ import (
 )
 
 func getConnectionString(dbPassword string) string {
-	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "minitwit_db", "postgres", dbPassword, "postgres", 5432)
+	return fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable", "database", "postgres", dbPassword, "postgres", 5432)
 }
 
 func getAzureConnString(dbPassword string) string {
@@ -42,7 +43,7 @@ func GetRedisConnection() *redis.Client {
 
 func initRedisConnection() *redis.Client {
 	redisDb = redis.NewClient(&redis.Options{
-		Addr:     "minitwit_redis:6379",
+		Addr:     "redis:6379",
 		Password: "",
 		DB:       0,
 	})
