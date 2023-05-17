@@ -7,7 +7,7 @@ import (
 )
 
 func ConfigureSession(router *gin.Engine) {
-	store, err := redis.NewStore(10, "tcp", "minitwit_redis:6379", "", []byte("secret"))
+	store, err := redis.NewStore(10, "tcp", "redis:6379", "", []byte("secret"))
 	store.Options(sessions.Options{MaxAge: 60 * 60 * 24})
 	router.Use(sessions.Sessions("mysession", store))
 

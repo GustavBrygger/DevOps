@@ -15,7 +15,7 @@ volumes:
 
 services:
   db:
-    container_name: minitwit_db
+    container_name: database
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -44,7 +44,7 @@ services:
       - prometheus
 
   redis:
-    container_name: minitwit_redis
+    container_name: redis
     image: redis:6.0-rc1
     restart: always
     ports:
@@ -110,6 +110,7 @@ services:
 
   nginx:
     image: nginx
+    container_name: nginx
     ports:
       - 9200:9200
       - 5601:5601
