@@ -101,13 +101,17 @@ since it widely used, well documented and has better superior features like sani
 % Argue for Terraform choice??
 - Infrastructure as code is important for maintainability reasons. Therefore Terraform was an obvious choice.
 Terraform is for remote cloud providers. Vagrant is for local development. 
-%%% NOTE:
-%The application is hosted at Digital Ocean. We use Docker Swarms to scale the application horizontally. For 
-%monitoring the application we use Grafana. Logging is done using Elastic Search and Kibana. Additionally, we have a Redis database 
-%that stores sessions and the integer 'latest' and a postgreSQL database storing other information, such as 
-%the registered users and created messages. 
 
 \subsection{Important Interactions of Subsystems}
+In the image below the interactions between our subssystems can be seen:
+
+\begin{figure}[H]
+    \centering
+    \captionsetup{justification=centering,margin=1cm}
+    \includegraphics[width=0.8\linewidth]{report/images/InteractionsOfSystems.png}
+    \caption{MiniTwit Application Frontend}
+    \label{fig:minitwit}
+\end{figure}
 
 \subsection{Current state of the system}
 
