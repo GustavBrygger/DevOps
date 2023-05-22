@@ -3,7 +3,8 @@
 \subsection{Design and Architecture of MiniTwit}
 The MiniTwit system is designed in a way that allows us to separate the models, the views and the controllers,
 as seen in figure \ref{fig:minitwit}. This is done to reduce the coupling between our components and to make 
-it simpler to extend the functionality of the application. For both safety and simplification of CRUD operations we used Gorm.
+it simpler to extend the functionality of the application. For both safety and simplification of CRUD operations 
+we used Gorm.
 
 \begin{figure}[H]
     \centering
@@ -32,7 +33,7 @@ hosted on. The servers are running 9 docker containers responsible for:
     \item Kibana for visualizing the results from Elastic search
     \item Prometheus for monitoring the application in terms of CPU usage and request time
     \item Grafana for visualizing the monitoring
-    \item Nginx for load balancer? skriv her
+    \item Nginx for load balancing the incoming traffic to the different services
 \end{itemize}
 
 From within each of these containers we depend on large number of libraries of which the major ones we consider to be:
@@ -42,7 +43,7 @@ From within each of these containers we depend on large number of libraries of w
     \item \textit{x/crypto/bcrypt} libaray for hashing the user password.
 \end{itemize}
 
-In a more board term of sense we also depend on Docker, Go and SSH protocol to work.
+In a more board sense the application also depend on Docker, Go, Ubuntu, python and SSH protocol to work.
 
 At last we also depend on pre-build git workflows such as \textit{docker/build-push-action@v2} or \textit{rymndhng/release-on-push-action@master}.
 
@@ -62,11 +63,15 @@ knowledge, and general simplicity, the advantages of using go with the GIN frame
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of virtualization techniques and deployment targets
 \subsubsection{Arguments for virtualization techniques and deployment targets}
-Docker was chosen because it's the industry standard. Other container strategies are good, but given knowledge of future need for orchestration (in either docker swarm or kubernetes) Docker was an obvious choice.  (ok I guess man også kunne bruge podman med kubernetes)
+Docker was chosen because it's the industry standard. Other container strategies are good, but given knowledge 
+of future need for orchestration (in either docker swarm or kubernetes) Docker was an obvious choice.
 
-We used Digital Ocean mainly for budgetary reasons and for ease of deployement. Using the Github Student Starter pack, \$200 in free credits were made available to us. This was enough to ensure that the application was able to run for the duration of the course. In fact it allowed us to test out the grander deployment strategies we settled on in the final application; running 7 concurrent droplets. Using multiple accounts furthermore allowed us to create a parallel  
-
-Digital ocean was employed for budgetary reasons, and also because the guides were made for it.
+We used Digital Ocean mainly for budgetary reasons and for ease of deployement. Using the Github Student 
+Starter pack, \$200 in free credits were made available to us. This was enough to ensure that the application 
+was able to run for the duration of the course. In fact it allowed us to test out the grander deployment strategies
+\todo{Which ones?}
+we settled on in the final application; running 7 concurrent droplets. Using multiple accounts furthermore allowed 
+us to create a parallel Digital ocean was employed for budgetary reasons, and also because the guides were made for it.
 It's also more accessible than other more complicated providers such as AWS. 
 
 \subsubsection{Arguments for ORM and DBMS}
