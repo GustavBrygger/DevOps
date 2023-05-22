@@ -30,7 +30,7 @@ hosted on. The servers are running 9 docker containers responsible for:
     \item Elastic Search - Indexing logs such that we can search and analyse them
     \item Filebeat for collecting and forwarding the logging to Elastic search
     \item Kibana for visualizing the results from Elastic search
-    \item Prometheus for monitoring the application in terms of ...... SKRIV mere her
+    \item Prometheus for monitoring the application in terms of CPU usage and request time
     \item Grafana for visualizing the monitoring
     \item Nginx for load balancer? skriv her
 \end{itemize}
@@ -43,7 +43,7 @@ From within each of these containers we depend on large number of libraries of w
 \end{itemize}
 
 In a more board term of sense we also depend on Docker, Go and SSH protocol to work. We choose Go for the reason being 
-that .......... 
+that \todo{skriv her} 
 
 At last we also depend on pre-build git workflows such as \textit{docker/build-push-action@v2} or \textit{rymndhng/release-on-push-action@master}.
 
