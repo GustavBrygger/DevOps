@@ -22,7 +22,7 @@ an appropriate HTTP response.
 
 \subsection{Dependencies of MiniTwit system}
 
-For the MiniTwit application to run we are depending on first and foremost Digital Oecan whos servers the application is 
+For the MiniTwit application to run we are depending on first and foremost Digital Ocean whos servers the application is 
 hosted on. The servers are running 9 docker containers responsible for: 
 \begin{itemize}
     \item The Database running on a postgres:14.1-alpine image - Responsible for holding all the users data.
@@ -43,7 +43,15 @@ From within each of these containers we depend on large number of libraries of w
     \item x/crypto/bcrypt libaray for hashing the user password.
 \end{itemize}
 
-In a more board sense the application also depend on Docker, Go, Ubuntu, python and SSH protocol to work. At last we 
+For initalizing the containers we used docker-compose and docker swarm. Hence we also depened on docker, docker-compose
+and terraform which was used to init all the servers
+\begin{itemize}
+    \item connect to docker swarm nodes via token
+    \item manage ssh keys on nodes 
+    \item mange config an secret on notes
+\end{itemize}
+
+In a more board sense the application also depend on Go, Ubuntu, python and SSH protocol to work. At last we 
 also depend on pre-build git workflows such as \textit{docker/build-push-action@v2} or \textit{rymndhng/release-on-push-action@master}.
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of programming language and framework
