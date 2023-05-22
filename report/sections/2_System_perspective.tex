@@ -39,7 +39,7 @@ From within each of these containers we depend on large number of libraries of w
 \begin{itemize}
     \item Gorm used for object-relational mapping allowing us to perform CRUD operations io GO.
     \item Gin handling all of the routing of the HTTP methods.
-    \item x/crypto/bcrypt libaray for hashing the user password.
+    \item \textit{x/crypto/bcrypt} libaray for hashing the user password.
 \end{itemize}
 
 In a more board term of sense we also depend on Docker, Go and SSH protocol to work. We choose Go for the reason being 
@@ -49,7 +49,9 @@ At last we also depend on pre-build git workflows such as \textit{docker/build-p
 \subsubsection{Arguments for ORM and DBMS}
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of ORM framework and chosen DBMS.
-In regards to choosing ORM(Object-relational mapping) and DBMS(Database Management Systems) we settled on using \textit{PostgresSQL} as our DBMS and \textit{Gorm} for ORM. In terms of choosing DBMS we considered \textit{SQLite} and \textit{digital ocean manged db}:
+In regards to choosing ORM(Object-relational mapping) and DBMS(Database Management Systems) we settled on 
+using \textit{PostgresSQL} as our DBMS and \textit{Gorm} for ORM. In terms of choosing DBMS we considered 
+\textit{SQLite} and \textit{digital ocean manged db}:
 \begin{itemize}
     \item Potential arguments over SQLite 
     \begin{itemize}
@@ -64,7 +66,8 @@ In regards to choosing ORM(Object-relational mapping) and DBMS(Database Manageme
     \end{itemize}
 \end{itemize}
 
-For ORM we considered \textit{XORM}
+For ORM we considered \textit{XORM} and \textit{beego} but due to our limited experience with GO we choose Gorm 
+since it widely used, well documented and has better superior features like sanitizing input \footnote{\url{https://blog.logrocket.com/comparing-orm-packages-go/ & https://sumit-agarwal.medium.com/gorm-vs-xorm-part-1-d156ba9de404}}.
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of programming language and framework
 \subsubsection{Arguments for programming language and framework}
