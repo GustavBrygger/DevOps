@@ -109,10 +109,20 @@ In the image below the interactions between our subssystems can be seen:
     \centering
     \captionsetup{justification=centering,margin=1cm}
     \includegraphics[width=0.8\linewidth]{report/images/InteractionsOfSystems.png}
-    \caption{MiniTwit Application Frontend}
+    \caption{Subsystem interactions}
     \label{fig:minitwit}
 \end{figure}
 
 \subsection{Current state of the system}
+In the current state of the system our stack consists of: 
+\begin{itemize}
+    \item Application running on Digital Ocean
+    \item Run tests in CI/CD pipeline within an isolated environment
+    \item Monitoring the application with Prometheus and Grafana
+    \item Code quality checks using Golangci-lint in the CI/CD pipeline
+    \item Logging using elastic search and Kibana
+\end{itemize}
+We did not manage to get Docker swarm and Reddis up and running. Docker swarm were missing to be setup 
+in our CI/CD chain and Reddis seemed to be running locally but a bug on prod seemed to ruin Reddis.
 
 \subsection{Project License}
