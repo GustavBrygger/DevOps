@@ -8,10 +8,9 @@ ITU Minitwit application written in Go with the Gin library.
 ## ⚡️ Quickstart!
 
 ```sh
-cd minitwit-go
 docker-compose up
 ```
-`docker-compose up` runs both the database and the server
+`docker-compose up` starts the database, MiniTwit and services used for monitoring and logging.
 
 
 If files have been changed, then instead run
