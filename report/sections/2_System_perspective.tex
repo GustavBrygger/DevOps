@@ -155,3 +155,12 @@ We did not manage to get Docker Swarm and Redis up and running. Docker swarm was
 in our CI/CD chain and Redis seemed to be running locally but a bug on prod seemed to ruin Redis.
 
 \subsection{Project License}
+In order for us to choose a license, we needed to know what type of software we were going to use, i.e what packages and their given licenses. 
+
+Another aspect is what we wanted to achieve with the application, if it was to be monetize, we would need to change it accordingly.
+
+In our case, we where tasked with making a MiniTwit application and we wanted to make it open source. 
+Therefore we choose an Apache 2.0 license. This is due to the fact that this will be compatible with the license of our packages, which were all deemed to either use MIT, Apache or BSD Clause 3 licenses\footnote{https://ghinda.com/blog/opensource/2020/open-source-licenses-apache-mit-bsd.html}. 
+
+We used the Go library 'go-licenses' in order to try and determine what packages we used within our Go application \footnote{https://github.com/google/go-licenses}. 
+Then we looked at any major pieces of software and frameworks in order to asses if we were in violation of them and as mentioned settled for an Apache 2.0 license.
