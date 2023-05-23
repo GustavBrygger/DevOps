@@ -53,11 +53,11 @@ which HTML containing the updated state is generated and returned to the client.
 \subsection{Dependencies of MiniTwit system}
 
 For the MiniTwit application to run, we are depending on first and foremost Digital Ocean whose servers the application is 
-hosted on. The servers are running 9 docker containers responsible for: 
+hosted on. The servers are running 7 docker containers responsible for: 
 \begin{itemize}
     \item The Database running on a postgres:14.1-alpine image - Responsible for holding all the users' data.
     \item The Server itself running on a golang:bullseye image.
-    \item A Redis server for storing sessions and the integer 'latest'.
+    \item A Redis instance for storing sessions and the integer 'latest'.
     \item Elastic Search - Indexing logs such that we can search and analyze them
     \item Filebeat for collecting and forwarding the logging to Elastic search
     \item Kibana for visualizing the results from Elastic search
@@ -109,36 +109,27 @@ was able to run for the duration of the course. It allowed us to test out the di
 from monoroid and containerized applications being spun up with only docker-compose to more advanced strategies such as
 running on multiple servers with services running to minimize downtime.\\
 
-Using multiple accounts furthermore allowed us to create a parallel Digital Ocean was employed for budgetary reasons, and also because the guides were made for it.
-It's also more accessible than other more complicated providers such as AWS. 
+Using multiple accounts furthermore allowed us to create a parallel Digital Ocean setup for our development branch.
+This was useful in order to test our CI/CD pipeline without interfering with the main application.\\
 
 \subsubsection{Arguments for ORM and DBMS}
 %OBS MSc students: Remember to log and provide good arguments for the choice of ORM framework and chosen DBMS.
 In regards to choosing ORM(Object-relational mapping) and DBMS(Database Management Systems), we settled on 
 using \textit{PostgresSQL} as our DBMS and \textit{Gorm} for ORM. In terms of choosing DBMS, we considered 
-\textit{SQLite} and \textit{digital ocean managed db}:
-\begin{itemize}
-    \item Potential arguments over SQLite 
-    \begin{itemize}
-        \item Scalability
-        \item Concurrency
-        \item No user management
-        \item Network access        
-    \end{itemize}
-    \item Potential arguments over e.g. Digital Ocean managed db
-    \begin{itemize}
-        \item Cost
-    \end{itemize}
-\end{itemize}
+\textit{SQLite} and \textit{digital ocean managed db}. PostgresSQL provides better scalability, concurrency and ability
+to handle user levels (e.g. admin vs user)
+
+While we could have deployed a PostgresSQL using Digital Oceans db service, we determined that for our needs it made 
+better sense to deploy a db ourselves. This was done for cost reasons (\$7/month for the smallest droplet vs. \$15/month 
+for the cheapest digital ocean db), but also to ensure that we had full control over the database.\\
 
 For ORM we considered \textit{XORM} and \textit{beego} but due to our limited experience with Go, we choose Gorm 
 since it widely used, well documented and has better superior features like sanitizing input \footnote{\url{https://blog.logrocket.com/comparing-orm-packages-go/ & https://sumit-agarwal.medium.com/gorm-vs-xorm-part-1-d156ba9de404}}.
 
-
 \subsubsection{Arguments for Terraform}
 % Argue for Terraform choice??
-- Infrastructure as code is important for maintainability reasons. Therefore Terraform was an obvious choice.
-Terraform is for remote cloud providers. Vagrant is for local development. 
+We used Terraform to encode our infrastructure. Both due to being the industry, as well as being the deploymenet manager we were taught.
+Infrastructure as code is important to ensure that the infrastructure we deploy to the cloud provider is reproducible.
 
 \subsection{Important Interactions of Subsystems}
 In the image below the interactions between our subsystems can be seen:
