@@ -93,7 +93,19 @@ and store various metrics data from the web server. Prometheus pulls the metric 
 and stores it so it can be queried by Grafana and shown in the dashboard.  
 
 \subsection{Logging}
-Not finished yet
+Our logging setup is based on Elasticsearch, Kibana, and Filebeat as visualized by figure \ref{fig:logging}. 
+These open-source tools are widely used for log processing and are all developed by the same company which makes the integration easier. 
+Filebeat collects logs from the application containers after which they are forwarded to Elasticsearch. 
+Elasticsearch is a search and analytics engine and here the logs are indexed so they can be queried by Kibana where the logs can be visualized by interactive dashboards.  
+In our setup, Filebeat appends the container name to all logs so they can be filtered and visualized per-container basis.
+
+\begin{figure}[H]
+    \centering
+    \captionsetup{justification=centering,margin=1cm}
+    \includegraphics[width=0.8\linewidth]{report/images/logging.png}
+    \caption{Logging setup}
+    \label{fig:logging}
+\end{figure}
 
 \subsection{Security assessment}
 From our security assessment, we learned that the risks with the highest likelihood were that an attacker could gain unauthorized access to our codebase
