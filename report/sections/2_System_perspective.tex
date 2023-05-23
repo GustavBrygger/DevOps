@@ -3,7 +3,7 @@
 \subsection{Design and Architecture of MiniTwit}
 The MiniTwit application architecture has been designed following software design guidelines such as low coupling, high cohesion, and the Single Responsibility Principle (SRP). 
 These concepts are closely related and helped us create software that is easier to work with. The SRP states that each part of a software system should be responsible for one thing and therefore only have one reason to change\footnote{\url{https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html}}. 
-Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped together in a single coherent unit\footnote{\url{https://www.codurance.com/publications/software-creation/2016/03/03/cohesion-cornerstone-software-design}}. 
+Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped in a single coherent unit\footnote{\url{https://www.codurance.com/publications/software-creation/2016/03/03/cohesion-cornerstone-software-design}}. 
 In general, the goal is to have modules with high cohesion as this ensures that a module's code is focused on a single aspect of the application's functionality. 
 This is vital as too much functionality in a single module can result in code that is hard to understand and change. 
 Finally, coupling refers to the degree of interdependence between the modules within a system and it measures how well-defined the boundaries between different modules are. 
@@ -12,7 +12,7 @@ Together the SRP, low coupling, and high cohesion are key enablers when it comes
 
 To achieve low coupling and high cohesion the MiniTwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit_arch}. 
 As prescribed by the SRP each layer is responsible for one thing and we have minimized the dependencies between the layers to make MiniTwit extendable.
- This also reduces cognitive load as it is easier to navigate a system where related functionality is grouped together. 
+ This also reduces cognitive load as it is easier to navigate a system where related functionality is grouped. 
 
 
 % Fix system architecture image.
@@ -93,7 +93,7 @@ We used Digital Ocean mainly for budgetary reasons and for ease of deployment. U
 was able to run for the duration of the course. It allowed us to test out different deployment strategies going from single-server and containerized applications being spun up with only Docker Compose to more advanced strategies such as running multiple servers and services to minimize downtime.\\
 
 Using multiple accounts furthermore allowed us to create a parallel Digital Ocean setup for our development branch.
-This was useful in order to test our CI/CD pipeline without interfering with the production environment.
+This was useful to test our CI/CD pipeline without interfering with the production environment.
 
 \subsubsection{Arguments for ORM, DBMS}
 %OBS MSc students: Remember to log and provide good arguments for the choice of ORM framework and chosen DBMS.
@@ -105,7 +105,7 @@ better sense to deploy a database ourselves. This was done for cost reasons (\$7
 for the cheapest Digital Ocean database), but also to ensure that we had full control over the database.\\
 
 For ORM we considered XORM and Beego but due to our limited experience with Go, we choose Gorm 
-since it is widely used, well documented, and has better superior features like sanitizing input \footnote{\url{https://blog.logrocket.com/comparing-orm-packages-go/ & https://sumit-agarwal.medium.com/gorm-vs-xorm-part-1-d156ba9de404}}.
+since it is widely used, well documented, and has better superior features like sanitizing input\footnote{\url{https://blog.logrocket.com/comparing-orm-packages-go/ & https://sumit-agarwal.medium.com/gorm-vs-xorm-part-1-d156ba9de404}}.
 
 \subsubsection{Arguments for Terraform}
 % Argue for Terraform choice??
@@ -133,12 +133,12 @@ In the current state of the system, our stack consists of:
     \item Code quality checks using Golangci-lint in the CI/CD pipeline checking for typecheck, gosimple, unused, etc.
     \item Logging using Elasticsearch and Kibana
 \end{itemize}
-We did not manage to get Docker Swarm and Redis up and running. Docker Swarm has yet to be setup in our CI/CD pipeline and Redis seemed to be running locally but a bug in production seemed to cause Redis to malfunction.
+We did not manage to get Docker Swarm and Redis up and running. Docker Swarm has yet to be set up in our CI/CD pipeline and Redis seemed to be running locally but a bug in production seemed to cause Redis to malfunction.
 
 \subsection{Project License}
 To choose a license, we needed to know what type of software we were going to use, i.e. what packages and their given licenses. \\
 
-We used the Go library 'go-licenses' in order to try and determine what packages we used within our Go application \footnote{https://github.com/google/go-licenses}. 
+We used the Go library 'go-licenses' to try and determine what packages we used within our Go application \footnote{https://github.com/google/go-licenses}. 
 Then we looked at all major pieces of software and frameworks and determined they all used either MIT, Apache, or BSD Clause 3.
 
 We determined that an Apache 2.0 License was compatible with our dependencies and our desire to make the project open source \footnote{https://ghinda.com/blog/opensource/2020/open-source-licenses-apache-mit-bsd.html}. 
