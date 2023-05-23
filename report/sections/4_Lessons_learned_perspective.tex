@@ -1,0 +1,47 @@
+\section{Lessons Learned Perspective}
+
+\subsection{Evolution and Refactoring}
+The ideal approach to refactoring the old application would be to analyze, divide and concur the old application into 
+subtasks and define the overall design of the new application and then start the refactoring process. However, we started
+refactoring without having an idea of how the result/end system should be. Thus, the process became very unstructured. 
+We have learned that this could have been avoided by better planning aided by e.g. a Kanban board and weekly standups. This caused the 
+refactoring process to take longer than anticipated and left us behind schedule. An example can be seen in this
+\href{https://github.com/organizationGB/DevOps/commit/7bbccc97d6d69e90724b00e93e92334210490085}{commit} which is from a 
+branch we ended up not using. \\
+
+After refactoring the evolution of our application started. Our problem in regards to planning persisted, we did manage
+to divide tasks but aggregating them afterwards could be challenging both in terms of information sharing and merging 
+code. The introduction of new technologies further complicated this process. Unfinished tasks from the backlog, coupled
+with a rapid expansion of the stack due to the exercises for the current week, resulted in a fractured team and
+codebase. This could have been avoided with less time pressure and better planning.
+
+\subsection{Operation}
+
+\subsubsection{Infrastructure as code}
+We experienced trouble configuring Terraform: due to some latency with Digital Ocean in spinning up containers, we regularly encountered an undebuggable error during provisioning. We eventually solved it by adding sleep commands between the provisioning of different droplets, in order to ensure that they were all up and running before we tried to connect to them.
+
+The lesson here was that Terraform isn't an infallible tool. It's a tool intended to streamline and simplify the provisioning process, but still ultimately depends on many sub-processes which can fail.
+
+\subsubsection{Scaling and load balancing}
+We found Docker Swarm to suffer from confusing terminology and a lack of clear documentation. The documentation is also spread out over multiple different services, such as Docker Compose and Docker Stack.
+
+Nginx was also difficult to set up. Both due to implementation difficulties, but also in conceptually understanding where to have the load balancers (i.e. outside the swarm or inside the swarm).
+
+Kubernetes was presented to be too technical and complicated. But the larger ecosystem and the wider availability of resources concerning Nginx and Kubernetes makes us wonder whether there is a lesson to be learned. Due to bad documentation, Docker Swarm's simpler interface might ultimately not be more user-friendly than the technically challenging, but more widely adopted Kubernetes.
+
+\subsubsection{Importing technical debt}
+During the development of this application, a lot of different tutorials and examples have been used. This has in some cases resulted in using old and deprecated versions of software. As an example, our stack ended up relying on a version of Grafana from 2017, which resulted in errors that were challenging to debug. 
+
+This was fixed by upgrading to a newer version of the software.
+
+Other examples include online resources often using old versions of docker-compose.
+
+The lesson here is to use examples and tutorials that are up to date. This was a general problem throughout the development process. 
+
+\subsection{Maintenance}
+In regards to maintaining the application, we faced issues discovering errors as we did not set up a way for us to get notified of any errors. None of the frameworks and libraries that were used in a final release were deprecated during the project, but issues were created on GitHub by 
+fellow students which we could have handled more formally to ensure that we solved them adequately.
+
+\subsection{DevOps style of work}
+In the process of developing the MiniTwit project, we worked as a team to create an infrastructure that would support a DevOps style of work by enabling us 
+to implement continuous integration and continuous delivery. We strived to deploy features once they were completed and had passed our testing pipeline. This strategy was chosen over deploying several features simultaneously. Our setup enabled us to deploy automatically through GitHub Actions and thus minimizing any manual interference.

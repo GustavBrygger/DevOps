@@ -23,3 +23,7 @@
 go.work
 Vagrantfile
 .vagrant
+
+/ssh_key
+secerets
+/temp

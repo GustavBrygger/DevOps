@@ -1,0 +1,69 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc} % for UTF-8 support
+\usepackage[T1]{fontenc} % for font encoding
+\usepackage{lipsum} % for sample text
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage[backend=biber]{biblatex}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[english]{babel}
+\usepackage[toc,page]{appendix}
+\usepackage[toc,acronym,section]{glossaries} % Acronyms in a nice way
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
+\usepackage{csquotes}
+\usepackage{titlesec}
+\usepackage{array}
+\usepackage{hyperref}
+
+\setlength\parindent{0pt}
+
+\titleformat*{\section}{\LARGE\bfseries}
+\titleformat*{\subsection}{\Large\bfseries}
+\titleformat*{\subsubsection}{\large\bfseries}
+\titleformat*{\paragraph}{\large\bfseries}
+\titleformat*{\subparagraph}{\large\bfseries}
+
+\usepackage[a4paper,
+            bindingoffset=0.2in,
+            left=1in,
+            right=1in,
+            top=1in,
+            bottom=1in,
+            footskip=.25in]{geometry}
+
+\begin{document}
+
+\include{report/title}
+
+\pagenumbering{gobble} % Remove page numbering
+\newpage
+
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+%----------------------------------------------------------------------------------------
+%	REPORT
+%----------------------------------------------------------------------------------------
+
+\input{report/sections/1_Introduction.tex}
+\newpage
+
+\input{report/sections/2_System_perspective.tex}
+\newpage
+
+\input{report/sections/3_Process_perspective.tex}
+\newpage
+
+\input{report/sections/4_Lessons_learned_perspective.tex}
+\newpage
+
+\input{report/sections/5_Appendix.tex}
+
+\end{document}
