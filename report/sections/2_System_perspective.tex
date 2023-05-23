@@ -1,7 +1,7 @@
 \section{System's Perspective}
 
 \subsection{Design and Architecture of MiniTwit}
-The MiniTwit application architecture has been designed following software design guidelines such as low coupling, high cohesion, and the Single Responsibility Principle(SRP). 
+The MiniTwit application architecture has been designed following software design guidelines such as low coupling, high cohesion, and the Single Responsibility Principle (SRP). 
 These concepts are closely related and helped us create software that is easier to work with. The SRP states that each part of a software system should be responsible for one thing and therefore only have one reason to change\footnote{\url{https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html}}. 
 Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped together in a single coherent unit\footnote{\url{https://www.codurance.com/publications/software-creation/2016/03/03/cohesion-cornerstone-software-design}}. 
 In general, the goal is to have modules with high cohesion as this ensures that a module's code is focused on a single aspect of the application's functionality. 
@@ -10,7 +10,7 @@ Finally, coupling refers to the degree of interdependence between the modules wi
 Low coupling implies that modules' knowledge of other modules' internal implementation details has been minimized\footnote{\url{https://www.martinfowler.com/ieeeSoftware/coupling.pdf}}. 
 Together the SRP, low coupling, and high cohesion are key enablers when it comes to reducing complexity and thereby ensuring a strong foundation for designing extendable software. \\
 
-To achieve low coupling and high cohesion the MiniTwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit}. 
+To achieve low coupling and high cohesion the MiniTwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit_arch}. 
 As prescribed by the SRP each layer is responsible for one thing and we have minimized the dependencies between the layers to make MiniTwit extendable.
  This also reduces cognitive load as it is easier to navigate a system where related functionality is grouped together. 
 
@@ -19,9 +19,9 @@ As prescribed by the SRP each layer is responsible for one thing and we have min
 \begin{figure}[H]
     \centering
     \captionsetup{justification=centering,margin=1cm}
-    \includegraphics[width=0.8\linewidth]{report/images/system_architecture.png}
+    \includegraphics[width=0.55\linewidth]{report/images/system_architecture.png}
     \caption{MiniTwit Architecture}
-    \label{fig:minitwit}
+    \label{fig:minitwit_arch}
 \end{figure}
 
 
@@ -31,25 +31,23 @@ In the application layer, all code related to core business logic is found.
 Business logic is separated from other parts of the application as doing so allows developers to understand and modify business logic without impacting other components of the application. 
 Secondly, separating business logic promotes reusability, as the code can easily be shared across different parts of the application. \\
 
-In the persistence layer, the database setup is configured. We use an Object Relational Mapper(ORM) called Gorm to interact with the database as it abstracts some of the complexity that comes with a relational database. 
+In the persistence layer, the database setup is configured. We use an Object Relational Mapper (ORM) called Gorm to interact with the database as it abstracts away some of the complexity that comes with a relational database. 
 The persistence layer also handles migrations and data seed. \\
 
 The web layer exposes our API and is implemented using a lightweight Go web framework called Gin.  
-Gin route requests to controllers which coordinate the request/response cycle including session management and validating. 
+Gin routes requests to controllers which coordinate the request/response cycle including session management and validating. 
 When request processing has finished HTML is generated and returned to the client.
 
-
 \subsection{Dependencies of MiniTwit system}
-
 For the MiniTwit application to run, we are depending on first and foremost Digital Ocean whose servers the application is 
-hosted on. The servers are running 7 docker containers responsible for: 
+hosted on. The goal was to run our MiniTwit application on 7 servers using the following 9 containers: 
 \begin{itemize}
-    \item The Database running on a postgres:14.1-alpine image - Responsible for holding all the users' data.
-    \item The Server itself running on a golang:bullseye image.
-    \item A Redis instance for storing sessions and the integer 'latest'.
-    \item Elastic Search - Indexing logs such that we can search and analyze them
-    \item Filebeat for collecting and forwarding the logging to Elastic search
-    \item Kibana for visualizing the results from Elastic search
+    \item The Database based on the latest Postgres image is responsible for holding all the users' data
+    \item The MiniTwit application's server is based on the latest Golang image
+    \item A Redis instance for storing sessions and the integer 'latest'
+    \item Elasticsearch for indexing logs such that we can search and analyze them
+    \item Filebeat for collecting and forwarding the logging to Elasticsearch
+    \item Kibana for visualizing the results from Elasticsearch
     \item Prometheus for monitoring the application in terms of CPU usage and request time
     \item Grafana for visualizing the monitoring
     \item Nginx for load balancing the incoming traffic to the different services
@@ -57,17 +55,17 @@ hosted on. The servers are running 7 docker containers responsible for:
 
 From within each of these containers, we depend on a large number of libraries of which the major ones we consider to be:
 \begin{itemize}
-    \item Gorm used for object-relational mapping allowing us to perform CRUD operations io GO.
-    \item Gin handling all of the routing of the HTTP methods.
+    \item Gorm used for object-relational mapping allowing us to perform CRUD operations in Go.
+    \item Gin used for routing the HTTP requests.
     \item x/crypto/bcrypt library for hashing the user password.
 \end{itemize}
 
-For initializing the containers we used docker-compose and docker swarm. Hence we also depend on docker, docker-compose
-and terraform which was used to init all the servers
+For initializing the containers we used Docker Compose and Docker Swarm. Hence we also depend on Docker, Docker Compose
+and Terraform which we intended to use to provision all the servers and perform the following tasks:
 \begin{itemize}
-    \item connect to docker swarm nodes via token
-    \item manage ssh keys on nodes 
-    \item manage config a secret on notes
+    \item Connect to docker swarm nodes via token
+    \item Manage ssh keys on nodes 
+    \item Manage configs and secrets on nodes
 \end{itemize}
 
 In a more broad sense, the application also depends on Go, Ubuntu, Python, and SSH protocol to work. At last we 
@@ -75,7 +73,7 @@ also depend on pre-build git workflows such as \textit{docker/build-push-action@
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of programming language and framework
 \subsubsection{Arguments for programming language and framework}
-We initially set out to use FastAPI in Python but eventually settled on GO for multiple reasons. From a personal 
+We initially set out to use FastAPI in Python but eventually settled on Go for multiple reasons. From a personal 
 development perspective, learning a new language is rarely a poor choice. Go is well-known for being relatively 
 fast to learn, whilst maintaining speed. From a more technical perspective, Go has advantages over many languages. 
 It's fast, it has concurrency built-in, and it has strong standard library support, with the most important features, 
@@ -83,43 +81,35 @@ even templating, being available as a standard package. \\
 
 We chose Gin as our web framework as it offers a minimalistic and fast approach to building web applications. 
 It also provides essential features like routing, middleware support, JSON handling, and request/response binding. All features that would have taken a long time to implement from scratch. Gin is well-maintained, has over twice the 
-amount of GitHub stars than the next most popular framework, and is one of the faster Go web frameworks.\\
-
-Whilst implementing the application in FastAPI might have been faster and easier, due to both prior python 
-knowledge, and general simplicity, the advantages of using go with the GIN framework can't be overstated.  
+amount of GitHub stars than the next most popular Go web framework, and is one of the faster Go web frameworks \footnote{https://web-frameworks-benchmark.netlify.app/compare?f=gin,jester,kemal,phoenix,sinatra,fastapi}.
+Whilst implementing the application in FastAPI might have been faster and easier, due to both prior Python 
+knowledge, and general simplicity, the speed and features provided by Go are a clear advantage.
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of virtualization techniques and deployment targets
 \subsubsection{Arguments for virtualization techniques and deployment targets}
-Docker was chosen because it's the industry standard. Other container strategies are good, but given knowledge 
-of the future need for orchestration (in either docker swarm or Kubernetes) Docker was an obvious choice.\\
+Docker was chosen because it's the industry standard. Other container strategies are also valid, but given knowledge of the need for orchestration (in either Docker Swarm or Kubernetes) Docker was an obvious choice.\\
 
-We used Digital Ocean mainly for budgetary reasons and for ease of deployment. Using the GitHub Student 
-Starter pack, \$200 in free credits were made available to us. This was enough to ensure that the application 
-was able to run for the duration of the course. It allowed us to test out the different deployment strategies
-from monoroid and containerized applications being spun up with only docker-compose to more advanced strategies such as
-running on multiple servers with services running to minimize downtime.\\
+We used Digital Ocean mainly for budgetary reasons and for ease of deployment. Using the GitHub Student Starter pack, \$200 in free credits were made available to us. This was enough to ensure that the application 
+was able to run for the duration of the course. It allowed us to test out different deployment strategies going from single-server and containerized applications being spun up with only Docker Compose to more advanced strategies such as running multiple servers and services to minimize downtime.\\
 
 Using multiple accounts furthermore allowed us to create a parallel Digital Ocean setup for our development branch.
-This was useful in order to test our CI/CD pipeline without interfering with the main application.\\
+This was useful in order to test our CI/CD pipeline without interfering with the production environment.
 
-\subsubsection{Arguments for ORM and DBMS}
+\subsubsection{Arguments for ORM, DBMS}
 %OBS MSc students: Remember to log and provide good arguments for the choice of ORM framework and chosen DBMS.
-In regards to choosing ORM(Object-relational mapping) and DBMS(Database Management Systems), we settled on 
-using \textit{PostgresSQL} as our DBMS and \textit{Gorm} for ORM. In terms of choosing DBMS, we considered 
-\textit{SQLite} and \textit{digital ocean managed db}. PostgresSQL provides better scalability, concurrency and ability
-to handle user levels (e.g. admin vs user)
+In regards to choosing Object-Relational Mapping (ORM) and Database Management System (DBMS), we settled on using Postgres as our DBMS and Gorm for ORM. In terms of choosing DBMS, we considered SQLite and a Digital Ocean managed Postgres instance. Postgres provides better scalability, concurrency, and ability
+to handle user levels (e.g. admin vs user) compared to SQLite.
 
-While we could have deployed a PostgresSQL using Digital Oceans db service, we determined that for our needs it made 
-better sense to deploy a db ourselves. This was done for cost reasons (\$7/month for the smallest droplet vs. \$15/month 
-for the cheapest digital ocean db), but also to ensure that we had full control over the database.\\
+While we could have deployed a Postgres using Digital Ocean Managed Databases, we determined that for our needs it made 
+better sense to deploy a database ourselves. This was done for cost reasons (\$7/month for the smallest droplet vs. \$15/month 
+for the cheapest Digital Ocean database), but also to ensure that we had full control over the database.\\
 
-For ORM we considered \textit{XORM} and \textit{beego} but due to our limited experience with Go, we choose Gorm 
-since it widely used, well documented and has better superior features like sanitizing input \footnote{\url{https://blog.logrocket.com/comparing-orm-packages-go/ & https://sumit-agarwal.medium.com/gorm-vs-xorm-part-1-d156ba9de404}}.
+For ORM we considered XORM and Beego but due to our limited experience with Go, we choose Gorm 
+since it is widely used, well documented, and has better superior features like sanitizing input \footnote{\url{https://blog.logrocket.com/comparing-orm-packages-go/ & https://sumit-agarwal.medium.com/gorm-vs-xorm-part-1-d156ba9de404}}.
 
 \subsubsection{Arguments for Terraform}
 % Argue for Terraform choice??
-We used Terraform to encode our infrastructure. Both due to being the industry, as well as being the deploymenet manager we were taught.
-Infrastructure as code is important to ensure that the infrastructure we deploy to the cloud provider is reproducible.
+We intended to use Terraform to store our infrastructure as code. Terraform is the industry standard, and storing our infrastructure as code will help generalize and speed up our provisioning. 
 
 \subsection{Important Interactions of Subsystems}
 In the image below the interactions between our subsystems can be seen:
@@ -127,10 +117,12 @@ In the image below the interactions between our subsystems can be seen:
 \begin{figure}[H]
     \centering
     \captionsetup{justification=centering,margin=1cm}
-    \includegraphics[width=0.8\linewidth]{report/images/InteractionsOfSystems.png}
+    \includegraphics[width=\linewidth]{report/images/InteractionsOfSystems.png}
     \caption{Subsystem interactions}
     \label{fig:minitwit}
 \end{figure}
+
+Here we mainly focus on how a client and our systems interact with one another in our intended design of the Docker Swarm. The different hardware components and how the services are supposed to be deployed in the Swarm Cluster can be seen in appendix \ref{swarm}.
 
 \subsection{Current state of the system}
 In the current state of the system, our stack consists of: 
@@ -139,18 +131,14 @@ In the current state of the system, our stack consists of:
     \item Run tests in CI/CD pipeline within an isolated environment
     \item Monitoring the application with Prometheus and Grafana
     \item Code quality checks using Golangci-lint in the CI/CD pipeline checking for typecheck, gosimple, unused, etc.
-    \item Logging using elastic search and Kibana
+    \item Logging using Elasticsearch and Kibana
 \end{itemize}
-We did not manage to get Docker Swarm and Redis up and running. Docker swarm was missing being setup 
-in our CI/CD chain and Redis seemed to be running locally but a bug on prod seemed to ruin Redis.
+We did not manage to get Docker Swarm and Redis up and running. Docker Swarm has yet to be setup in our CI/CD pipeline and Redis seemed to be running locally but a bug in production seemed to cause Redis to malfunction.
 
 \subsection{Project License}
-In order for us to choose a license, we needed to know what type of software we were going to use, i.e what packages and their given licenses. 
-
-Another aspect is what we wanted to achieve with the application, if it was to be monetize, we would need to change it accordingly.
-
-In our case, we where tasked with making a MiniTwit application and we wanted to make it open source. 
-Therefore we choose an Apache 2.0 license. This is due to the fact that this will be compatible with the license of our packages, which were all deemed to either use MIT, Apache or BSD Clause 3 licenses\footnote{https://ghinda.com/blog/opensource/2020/open-source-licenses-apache-mit-bsd.html}. 
+To choose a license, we needed to know what type of software we were going to use, i.e. what packages and their given licenses. \\
 
 We used the Go library 'go-licenses' in order to try and determine what packages we used within our Go application \footnote{https://github.com/google/go-licenses}. 
-Then we looked at any major pieces of software and frameworks in order to asses if we were in violation of them and as mentioned settled for an Apache 2.0 license.
+Then we looked at all major pieces of software and frameworks and determined they all used either MIT, Apache, or BSD Clause 3.
+
+We determined that an Apache 2.0 License was compatible with our dependencies and our desire to make the project open source \footnote{https://ghinda.com/blog/opensource/2020/open-source-licenses-apache-mit-bsd.html}. 
