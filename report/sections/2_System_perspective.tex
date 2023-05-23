@@ -1,23 +1,53 @@
 \section{System's Perspective}
 
 \subsection{Design and Architecture of MiniTwit}
-The MiniTwit system is designed in a way that allows us to separate the models, the views and the controllers,
-as seen in figure \ref{fig:minitwit}. This is done to reduce the coupling between our components and to make 
-it simpler to extend the functionality of the application. For both safety and simplification of CRUD operations 
-we used Gorm.
+The MiniTwit application architecture has been designed by following some important software design guidelines 
+such as low coupling, high cohesion, and the Single Responsibility Principle(SRP). 
+These concepts are closely related and basing the development on those helped us create software that is easier to work with. 
 
+The SRP states that each part of a software system should be responsible for one thing and therefore only have one reason to change(KILDE). 
+Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped together in a single coherent unit(KILDE). 
+In general, the goal is to have modules with high cohesion as this ensures that the code in a given module is focused on a single aspect of the application's functionality. 
+This is important as having too much functionality in a single module is likely to result in code that is hard to both understand and change. 
+
+Finally, coupling refers to the degree of interdependence between the modules within a system and it measures how well-defined the boundaries between different modules are. 
+Coupling can be classified as either low or high and low coupling implies that modules' knowledge of other modules' internal implementation details have been minimized(KILDE).
+Together the SRP, low coupling, and high cohesion are key enablers when it comes to reducing complexity and thereby ensuring a strong foundation for designing extendable software. \\
+
+To achieve low coupling and high cohesion the Minitwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit}. 
+As prescribed by the SRP each layer is responsible for one thing and we have minimized the dependencies between the layers thus making it easier to extend MiniTwit with new features. 
+It also reduces cognitive load as it makes it easier to navigate the system because code related to the same functionality is grouped together. 
+
+
+% Fix system architecture image.
 \begin{figure}[H]
     \centering
     \captionsetup{justification=centering,margin=1cm}
-    \includegraphics[width=0.8\linewidth]{report/images/system_architecture.png}
+    \includegraphics[width=0.8\linewidth]{./images/system_architecture.png}
     \caption{MiniTwit Architecture}
     \label{fig:minitwit}
 \end{figure}
 
-The application is implemented using the RESTful API, which means that when a user interacts with a part of the 
-view, an HTTP request containing a new state of the application is sent. This request is then handled by the corresponding controller, and it ensures 
-that the correct action is taken. This could be a call to a function that updates the model, and the return of 
-an appropriate HTTP response. 
+
+
+\subsubsection{Application, Persistence, and Web}
+In the application layer, all code related to core business logic is found. This includes the models that MiniTwit is built upon such as User and Message. 
+Business logic has been separated from other parts of the application as doing so allows developers to understand and 
+modify business logic without impacting other components of the application. Secondly, separating business logic promotes reusability, 
+as the code can easily be shared across different parts of the application.     \\
+
+In the persistence layer, the database setup is configured. We use an Object Relational Mapper(ORM) called GORM to interact 
+with the database as it abstracts some of the complexity that comes with a relational database(Link to ORM section). 
+Migrations and data seed are also handled in the persistence layer the latter only when the database contains no data. 
+This is useful for local development and in test environments as the application can be tested without having to create users first. \\
+
+The web layer is implemented using a lightweight Go web framework called Gin. 
+Gin was chosen because it offers a minimalistic and fast approach to building web applications as it provides 
+essential features like routing, middleware support, JSON handling, and request/response binding(KILDE). 
+All features that would have taken a long time to implement from scratch. Gin route requests to controllers 
+which coordinate the request/response cycle which includes ensuring the validity of a given request. 
+Some requests include new data such as tweets and this data is used to update the database state after 
+which HTML containing the updated state is generated and returned to the client. \\
 
 
 \subsection{Dependencies of MiniTwit system}
