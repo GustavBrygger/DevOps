@@ -1,7 +1,7 @@
 \section{System's Perspective}
 
 \subsection{Design and Architecture of MiniTwit}
-The MiniTwit application architecture has been designed by following software design guidelines such as low coupling, high cohesion, and the Single Responsibility Principle(SRP). 
+The MiniTwit application architecture has been designed following software design guidelines such as low coupling, high cohesion, and the Single Responsibility Principle(SRP). 
 These concepts are closely related and helped us create software that is easier to work with. The SRP states that each part of a software system should be responsible for one thing and therefore only have one reason to change\footnote{\url{https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html}}. 
 Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped together in a single coherent unit\footnote{\url{https://www.codurance.com/publications/software-creation/2016/03/03/cohesion-cornerstone-software-design}}. 
 In general, the goal is to have modules with high cohesion as this ensures that a module's code is focused on a single aspect of the application's functionality. 
@@ -10,7 +10,7 @@ Finally, coupling refers to the degree of interdependence between the modules wi
 Low coupling implies that modules' knowledge of other modules' internal implementation details has been minimized\footnote{\url{https://www.martinfowler.com/ieeeSoftware/coupling.pdf}}. 
 Together the SRP, low coupling, and high cohesion are key enablers when it comes to reducing complexity and thereby ensuring a strong foundation for designing extendable software. \\
 
-To achieve low coupling and high cohesion the Minitwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit}. 
+To achieve low coupling and high cohesion the MiniTwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit}. 
 As prescribed by the SRP each layer is responsible for one thing and we have minimized the dependencies between the layers to make MiniTwit extendable.
  This also reduces cognitive load as it is easier to navigate a system where related functionality is grouped together. 
 
@@ -79,7 +79,7 @@ We initially set out to use FastAPI in Python but eventually settled on GO for m
 development perspective, learning a new language is rarely a poor choice. Go is well-known for being relatively 
 fast to learn, whilst maintaining speed. From a more technical perspective, Go has advantages over many languages. 
 It's fast, it has concurrency built-in, and it has strong standard library support, with the most important features, 
-even templating, being available as a standard package.\\
+even templating, being available as a standard package. \\
 
 We chose Gin as our web framework as it offers a minimalistic and fast approach to building web applications. 
 It also provides essential features like routing, middleware support, JSON handling, and request/response binding. All features that would have taken a long time to implement from scratch. Gin is well-maintained, has over twice the 
