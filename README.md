@@ -2,7 +2,7 @@
   ITU-minitwit
 </h1>
 <p align="center">
-ITU Minitwit application written in Go with the Gin library.
+ITU Minitwit application written in Go using the Gin web framework.
 <br/>
 
 ## ⚡️ Quickstart!
