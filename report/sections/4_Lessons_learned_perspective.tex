@@ -15,16 +15,67 @@ code. The introduction of new technologies further complicate this process. Unfi
 with a rapid expansion of the stack due to the exercises for the current week, resulted in a fractured team and
 codebase. This could have been avoided with less time pressure and better planning.\\
 
-From a retrospective we should have been more structural in terms of e.g. having a daily meeting every time we met to encourage 
+Retrospective we should have been more structural in terms of e.g. having a daily meeting every time we met to encourage 
 information sharing such as what are you working on, what do you expect of today and how far are we in the total process
 of reaching this week goal.
 
 \subsection{Operation}
 
+\subsubsection{Infrastructure as code}
+Through the project we used vagrant and terraform in order to maintain infrastructure as code.
+Vagrant was used in the beginning as a way to deploy digital ocean droplets. We found that while it was useful,
+it was only somewhat useful, especially given the understanding required behind generating a single droplet or vm.
+Terraform and their integration was a pain. Due to some latency with digital ocean in spinning up containers, we regularly
+encountered an undebuggable error during commisioning. We eventually solved it by adding sleep commands between the commisioning
+of different droplets, in order to make ensure that they were all up and running before we tried to connect to them.\\
+
+\subsubsection{Digital Ocean}
+Digital Ocean worked without too much to complain about, except for the latency issues mentioned above.
+
+\subsubsection{Github Actions}
+Overall, Github actions was a useful CI/CD tool. We had trouble with some of the actions, such as the ssh and scp actions. 
+We also had trouble with the documentation, as figuring out how to do certain things, such as including secrets.
+We also had trouble running actions manually on a specific branch. This caused some early commits to be made, just to trigger
+the action.\\
+
+\subsubsection{Docker}
+Docker worked well for most of our use-cases. During the initial development, we used docker in together with a hot-reloading
+package, in order to speed up development in GO. This turned out to overcomplicate the process however. The lesson learned
+was that docker should be used in a simple context, and as single run containers.
+
+\subsubsection{Docker Swarm}
+Docker Swarm is a really good idea in theory, however in practice the usefulness was limited by the quality of the documentation.
+The service suffers from confusing terminology, and a lack of clear documentation. The documentation is also spread out over
+multiple different services, such as docker compose and docker stack.\\ It seems like Docker are trying to consolidate swarm into
+docker-compose, without actually doing it.
+
+The retoric has presented in the lecture and in certain hackernews articles, is that kubernetes is too technical and complicated.
+The lesson learned is this regard is that due to bad documentation Docker Swarm's simpler interface might not be more user friendly than the
+better documented, but more technically challenging kubernetes.\\
+
+If we were to redo the project, we would have chosen to do it in kubernetes instead of docker swarm.\\ This is also the industry standard.
+
+\subsubsection{Logging}
+We used the BEK stack for logging. This was a good choice, as it was easy to set up and use. The only issue we had was with provided tutorials,
+since they were outdated and deprecated.\\ Therefore, it would have been better to use the official documentation from the beginning.
+Logging gave use issues when it came to an integration with NGINX, since we had trouble adding nginx' authentication to the kibana service.
+
+\subsubsection{Monitoring}
+We used Prometheus and Grafana for monitoring. This was a good choice, as it was easy to set up and use. The only issue we had was with provided tutorials,
+since they were outdated and deprecated.\\ The provided tutorial presented us with a grafana version from 2017, that lead to a difficult to debug issue, that
+was solved by using a different tutorial using a newer version of grafana.\\
+
+\subsubsection{Security}
+We waited a long time to introduce environment secrets to our github repo, and to use them effectively.
+This lead to some security issues, such as our database username and password being exposed in the github repo.
+We should have spent some more time in the very beginning ensuring that environment secrets were used correctly.\\
+
+
+\subsubsection{Scaling and load balancing}
+Nginx was difficult to set up. Both conceptually understanding where to have the load balancers (i.e. outside the swarm or inside the swarm).
+Furthermore configuration was hard, and required a lot of trial and error.\\
+
+
 \subsection{Maintenance}
 
 \subsection{DevOps style of work}
-In the process of developing the MiniTwit project, we worked as a team to create an infrastructure that would support a DevOps style of work by enabling us 
-to implement continuous integration and continuous delivery to reduce the impact of making large deployments infrequently. We strived to deploy a developed 
-feature once it was completed and tested through our pipeline rather than waiting to combine several features to deploy. Our setup enabled us to deploy automatically
-through GitHub Actions and thus avoid any manual interference.
