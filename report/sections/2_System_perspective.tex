@@ -1,22 +1,18 @@
 \section{System's Perspective}
 
 \subsection{Design and Architecture of MiniTwit}
-The MiniTwit application architecture has been designed by following some important software design guidelines 
-such as low coupling, high cohesion, and the Single Responsibility Principle(SRP). 
-These concepts are closely related and basing the development on those helped us create software that is easier to work with. 
-
-The SRP states that each part of a software system should be responsible for one thing and therefore only have one reason to change(KILDE). 
-Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped in a single coherent unit(KILDE). 
-In general, the goal is to have modules with high cohesion as this ensures that the code in a given module is focused on a single aspect of the application's functionality. 
-This is important as having too much functionality in a single module is likely to result in code that is hard to both understand and change. 
-
+The MiniTwit application architecture has been designed following software design guidelines such as low coupling, high cohesion, and the Single Responsibility Principle(SRP). 
+These concepts are closely related and helped us create software that is easier to work with. The SRP states that each part of a software system should be responsible for one thing and therefore only have one reason to change\footnote{\url{https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html}}. 
+Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped together in a single coherent unit\footnote{\url{https://www.codurance.com/publications/software-creation/2016/03/03/cohesion-cornerstone-software-design}}. 
+In general, the goal is to have modules with high cohesion as this ensures that a module's code is focused on a single aspect of the application's functionality. 
+This is vital as too much functionality in a single module can result in code that is hard to understand and change. 
 Finally, coupling refers to the degree of interdependence between the modules within a system and it measures how well-defined the boundaries between different modules are. 
-Coupling can be classified as either low or high and low coupling implies that modules' knowledge of other modules' internal implementation details have been minimized(KILDE).
+Low coupling implies that modules' knowledge of other modules' internal implementation details has been minimized\footnote{\url{https://www.martinfowler.com/ieeeSoftware/coupling.pdf}}. 
 Together the SRP, low coupling, and high cohesion are key enablers when it comes to reducing complexity and thereby ensuring a strong foundation for designing extendable software. \\
 
 To achieve low coupling and high cohesion the MiniTwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit}. 
-As prescribed by the SRP each layer is responsible for one thing and we have minimized the dependencies between the layers thus making it easier to extend MiniTwit with new features. 
-It also reduces cognitive load as it makes it easier to navigate the system because code related to the same functionality is grouped. 
+As prescribed by the SRP each layer is responsible for one thing and we have minimized the dependencies between the layers to make MiniTwit extendable.
+ This also reduces cognitive load as it is easier to navigate a system where related functionality is grouped together. 
 
 
 % Fix system architecture image.
@@ -31,23 +27,16 @@ It also reduces cognitive load as it makes it easier to navigate the system beca
 
 
 \subsubsection{Application, Persistence, and Web}
-In the application layer, all code related to core business logic is found. This includes the models that MiniTwit is built upon such as User and Message. 
-Business logic has been separated from other parts of the application as doing so allows developers to understand and 
-modify business logic without impacting other components of the application. Secondly, separating business logic promotes reusability, 
-as the code can easily be shared across different parts of the application.     \\
+In the application layer, all code related to core business logic is found. 
+Business logic is separated from other parts of the application as doing so allows developers to understand and modify business logic without impacting other components of the application. 
+Secondly, separating business logic promotes reusability, as the code can easily be shared across different parts of the application. \\
 
-In the persistence layer, the database setup is configured. We use an Object Relational Mapper(ORM) called GORM to interact 
-with the database as it abstracts some of the complexity that comes with a relational database(Link to ORM section). 
-Migrations and data seed are also handled in the persistence layer the latter only when the database contains no data. 
-This is useful for local development and in test environments as the application can be tested without having to create users first. \\
+In the persistence layer, the database setup is configured. We use an Object Relational Mapper(ORM) called Gorm to interact with the database as it abstracts some of the complexity that comes with a relational database. 
+The persistence layer also handles migrations and data seed. \\
 
-The web layer is implemented using a lightweight Go web framework called Gin. 
-Gin was chosen because it offers a minimalistic and fast approach to building web applications as it provides 
-essential features like routing, middleware support, JSON handling, and request/response binding(KILDE). 
-All features that would have taken a long time to implement from scratch. Gin route requests to controllers 
-which coordinate the request/response cycle which includes ensuring the validity of a given request. 
-Some requests include new data such as tweets and this data is used to update the database state after 
-which HTML containing the updated state is generated and returned to the client. 
+The web layer exposes our API and is implemented using a lightweight Go web framework called Gin.  
+Gin route requests to controllers which coordinate the request/response cycle including session management and validating. 
+When request processing has finished HTML is generated and returned to the client.
 
 
 \subsection{Dependencies of MiniTwit system}
@@ -89,14 +78,15 @@ also depend on pre-build git workflows such as \textit{docker/build-push-action@
 We initially set out to use FastAPI in Python but eventually settled on GO for multiple reasons. From a personal 
 development perspective, learning a new language is rarely a poor choice. Go is well-known for being relatively 
 fast to learn, whilst maintaining speed. From a more technical perspective, Go has advantages over many languages. 
-It's fast, it has concurrency built-in, and it has a strong standard library support, with most important features, 
-even templating, being available as a standard package.\\
+It's fast, it has concurrency built-in, and it has strong standard library support, with the most important features, 
+even templating, being available as a standard package. \\
 
-Gin is not the fastest Go framework, but it has several advantages. It is well-maintained, has over twice the 
+We chose Gin as our web framework as it offers a minimalistic and fast approach to building web applications. 
+It also provides essential features like routing, middleware support, JSON handling, and request/response binding. All features that would have taken a long time to implement from scratch. Gin is well-maintained, has over twice the 
 amount of GitHub stars than the next most popular framework, and is one of the faster Go web frameworks.\\
 
 Whilst implementing the application in FastAPI might have been faster and easier, due to both prior python 
-knowledge, and general simplicity, the advantages of using go with the GIN framework can't be overstated. 
+knowledge, and general simplicity, the advantages of using go with the GIN framework can't be overstated.  
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of virtualization techniques and deployment targets
 \subsubsection{Arguments for virtualization techniques and deployment targets}
