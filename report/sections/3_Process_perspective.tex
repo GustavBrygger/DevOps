@@ -114,8 +114,11 @@ in our public codebase. We made sure that these are not stored directly in the s
 risk could be improved by changing the default usernames and passwords used to something that follows security standards.  
 
 \subsection{Scaling and load balancing}
-%Docker swarms and 2x nginx as load balancers. 
-Not finished yet.
+
+Our choice for scaling strategy was to divide our services into micro-services and deploy them in a Docker Swarm cluster. This meant that we could scale horizontally and vertically. In this design, we had multiple instances of loadbalancers, that would be placed on different nodes. The purpose of having multiple instances of the MiniTwit application services is that we try to ensure up-time if a container on another server node breaks for some unforeseen reason. Our services that were single-points of failure given the design, was the RedisDB, PosgresDB and Elasticsearch, the later only meaning our logging would be down. 
+
+Since we used Docker Swarm to orchestrate our micro-services, we would now be able to take advantage of their built-in functions in the update strategy. Our choice was to use a stop-first rolling update strategy, which is mentioned in the Docker
+Swarm documentation \footnote{https://docs.docker.com/engine/swarm/swarm-tutorial/rolling-update/}. This aims to achieve a close to zero downtime as we roll out updates for the application containers and allows us to gracefully update each container as we move to a newer version of the application.
 
 \subsection{AI-assistants}
 The team has used AI-assistants to aid in the development and deployment of the MiniTwit application. We used OpenAI's ChatGPT, which is an AI language model, 
