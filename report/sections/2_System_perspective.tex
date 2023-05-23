@@ -6,7 +6,7 @@ such as low coupling, high cohesion, and the Single Responsibility Principle(SRP
 These concepts are closely related and basing the development on those helped us create software that is easier to work with. 
 
 The SRP states that each part of a software system should be responsible for one thing and therefore only have one reason to change(KILDE). 
-Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped together in a single coherent unit(KILDE). 
+Cohesion is closely related to the SRP and it is a measure of the degree to which related functionality is grouped in a single coherent unit(KILDE). 
 In general, the goal is to have modules with high cohesion as this ensures that the code in a given module is focused on a single aspect of the application's functionality. 
 This is important as having too much functionality in a single module is likely to result in code that is hard to both understand and change. 
 
@@ -16,14 +16,14 @@ Together the SRP, low coupling, and high cohesion are key enablers when it comes
 
 To achieve low coupling and high cohesion the MiniTwit application has been split into three layers namely persistence, web, and application as seen in figure \ref{fig:minitwit}. 
 As prescribed by the SRP each layer is responsible for one thing and we have minimized the dependencies between the layers thus making it easier to extend MiniTwit with new features. 
-It also reduces cognitive load as it makes it easier to navigate the system because code related to the same functionality is grouped together. 
+It also reduces cognitive load as it makes it easier to navigate the system because code related to the same functionality is grouped. 
 
 
 % Fix system architecture image.
 \begin{figure}[H]
     \centering
     \captionsetup{justification=centering,margin=1cm}
-    \includegraphics[width=0.8\linewidth]{./images/system_architecture.png}
+    \includegraphics[width=0.8\linewidth]{report/images/system_architecture.png}
     \caption{MiniTwit Architecture}
     \label{fig:minitwit}
 \end{figure}
@@ -52,13 +52,13 @@ which HTML containing the updated state is generated and returned to the client.
 
 \subsection{Dependencies of MiniTwit system}
 
-For the MiniTwit application to run we are depending on first and foremost Digital Ocean whos servers the application is 
+For the MiniTwit application to run, we are depending on first and foremost Digital Ocean whose servers the application is 
 hosted on. The servers are running 9 docker containers responsible for: 
 \begin{itemize}
-    \item The Database running on a postgres:14.1-alpine image - Responsible for holding all the users data.
+    \item The Database running on a postgres:14.1-alpine image - Responsible for holding all the users' data.
     \item The Server itself running on a golang:bullseye image.
-    \item A redis server for storing sessions and the integer 'latest'.
-    \item Elastic Search - Indexing logs such that we can search and analyse them
+    \item A Redis server for storing sessions and the integer 'latest'.
+    \item Elastic Search - Indexing logs such that we can search and analyze them
     \item Filebeat for collecting and forwarding the logging to Elastic search
     \item Kibana for visualizing the results from Elastic search
     \item Prometheus for monitoring the application in terms of CPU usage and request time
@@ -66,7 +66,7 @@ hosted on. The servers are running 9 docker containers responsible for:
     \item Nginx for load balancing the incoming traffic to the different services
 \end{itemize}
 
-From within each of these containers we depend on large number of libraries of which the major ones we consider to be:
+From within each of these containers, we depend on a large number of libraries of which the major ones we consider to be:
 \begin{itemize}
     \item Gorm used for object-relational mapping allowing us to perform CRUD operations io GO.
     \item Gin handling all of the routing of the HTTP methods.
@@ -78,45 +78,45 @@ and terraform which was used to init all the servers
 \begin{itemize}
     \item connect to docker swarm nodes via token
     \item manage ssh keys on nodes 
-    \item mange config an secret on notes
+    \item manage config a secret on notes
 \end{itemize}
 
-In a more board sense the application also depend on Go, Ubuntu, python and SSH protocol to work. At last we 
+In a more broad sense, the application also depends on Go, Ubuntu, Python, and SSH protocol to work. At last we 
 also depend on pre-build git workflows such as \textit{docker/build-push-action@v2} or \textit{rymndhng/release-on-push-action@master}.
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of programming language and framework
 \subsubsection{Arguments for programming language and framework}
-We initially set out to use FastAPI in Python, but eventually settled on GO for multiple reasons. From a personal 
+We initially set out to use FastAPI in Python but eventually settled on GO for multiple reasons. From a personal 
 development perspective, learning a new language is rarely a poor choice. Go is well-known for being relatively 
-fast to learn, whilst maintaining speed. From a more technical perspective Go has advantages over many languages. 
+fast to learn, whilst maintaining speed. From a more technical perspective, Go has advantages over many languages. 
 It's fast, it has concurrency built-in, and it has a strong standard library support, with most important features, 
 even templating, being available as a standard package.\\
 
 Gin is not the fastest Go framework, but it has several advantages. It is well-maintained, has over twice the 
-amount of github stars than the next most popular framework, and is one of the faster go web frameworks.\\
+amount of GitHub stars than the next most popular framework, and is one of the faster Go web frameworks.\\
 
-Whilst implementing the application in fastAPI might have been faster and easier, due to both prior python 
+Whilst implementing the application in FastAPI might have been faster and easier, due to both prior python 
 knowledge, and general simplicity, the advantages of using go with the GIN framework can't be overstated. 
 
 %OBS MSc students: Remember to log and provide good arguments for the choice of virtualization techniques and deployment targets
 \subsubsection{Arguments for virtualization techniques and deployment targets}
 Docker was chosen because it's the industry standard. Other container strategies are good, but given knowledge 
-of future need for orchestration (in either docker swarm or kubernetes) Docker was an obvious choice.\\
+of the future need for orchestration (in either docker swarm or Kubernetes) Docker was an obvious choice.\\
 
-We used Digital Ocean mainly for budgetary reasons and for ease of deployment. Using the Github Student 
+We used Digital Ocean mainly for budgetary reasons and for ease of deployment. Using the GitHub Student 
 Starter pack, \$200 in free credits were made available to us. This was enough to ensure that the application 
-was able to run for the duration of the course. In fact it allowed us to test out the different deployment strategies
-from monoroid and containerized application being spin up with only docker-compose to more advanced strategies such as
-running on multiple servers with services running to mimimize downtime.\\
+was able to run for the duration of the course. It allowed us to test out the different deployment strategies
+from monoroid and containerized applications being spun up with only docker-compose to more advanced strategies such as
+running on multiple servers with services running to minimize downtime.\\
 
-Using multiple accounts furthermore allowed us to create a parallel Digital ocean was employed for budgetary reasons, and also because the guides were made for it.
+Using multiple accounts furthermore allowed us to create a parallel Digital Ocean was employed for budgetary reasons, and also because the guides were made for it.
 It's also more accessible than other more complicated providers such as AWS. 
 
 \subsubsection{Arguments for ORM and DBMS}
 %OBS MSc students: Remember to log and provide good arguments for the choice of ORM framework and chosen DBMS.
-In regards to choosing ORM(Object-relational mapping) and DBMS(Database Management Systems) we settled on 
-using \textit{PostgresSQL} as our DBMS and \textit{Gorm} for ORM. In terms of choosing DBMS we considered 
-\textit{SQLite} and \textit{digital ocean manged db}:
+In regards to choosing ORM(Object-relational mapping) and DBMS(Database Management Systems), we settled on 
+using \textit{PostgresSQL} as our DBMS and \textit{Gorm} for ORM. In terms of choosing DBMS, we considered 
+\textit{SQLite} and \textit{digital ocean managed db}:
 \begin{itemize}
     \item Potential arguments over SQLite 
     \begin{itemize}
@@ -125,13 +125,13 @@ using \textit{PostgresSQL} as our DBMS and \textit{Gorm} for ORM. In terms of ch
         \item No user management
         \item Network access        
     \end{itemize}
-    \item Potential arguments over e.g. digital ocean manged db
+    \item Potential arguments over e.g. Digital Ocean managed db
     \begin{itemize}
         \item Cost
     \end{itemize}
 \end{itemize}
 
-For ORM we considered \textit{XORM} and \textit{beego} but due to our limited experience with GO we choose Gorm 
+For ORM we considered \textit{XORM} and \textit{beego} but due to our limited experience with Go, we choose Gorm 
 since it widely used, well documented and has better superior features like sanitizing input \footnote{\url{https://blog.logrocket.com/comparing-orm-packages-go/ & https://sumit-agarwal.medium.com/gorm-vs-xorm-part-1-d156ba9de404}}.
 
 
@@ -152,15 +152,15 @@ In the image below the interactions between our subsystems can be seen:
 \end{figure}
 
 \subsection{Current state of the system}
-In the current state of the system our stack consists of: 
+In the current state of the system, our stack consists of: 
 \begin{itemize}
     \item Application running on Digital Ocean
     \item Run tests in CI/CD pipeline within an isolated environment
     \item Monitoring the application with Prometheus and Grafana
-    \item Code quality checks using Golangci-lint in the CI/CD pipeline checking for typecheck, gosimple, unused etc.
+    \item Code quality checks using Golangci-lint in the CI/CD pipeline checking for typecheck, gosimple, unused, etc.
     \item Logging using elastic search and Kibana
 \end{itemize}
-We did not manage to get Docker swarm and Redis up and running. Docker swarm were missing to be setup 
+We did not manage to get Docker Swarm and Redis up and running. Docker swarm was missing being setup 
 in our CI/CD chain and Redis seemed to be running locally but a bug on prod seemed to ruin Redis.
 
 \subsection{Project License}
