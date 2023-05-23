@@ -93,7 +93,9 @@ and store various metrics data from the web server. Prometheus pulls the metric 
 and stores it so it can be queried by Grafana and shown in the dashboard.  
 
 \subsection{Logging}
-Not finished yet
+Logging for our application was achieving using a BEK stack. This stack consists of three components: Filebeat, Elasticsearch, and Kibana.
+The advantages of this configuration stems from staying with elastic search as our provider for all services. Filebeat monitors all the docker logs from all running services,
+and parses them onto elasticsearch. Kibana is then used to visualize logs. 
 
 \subsection{Security assessment}
 From our security assessment, we learned that the risks with the highest likelihood were that an attacker could gain unauthorized access to our codebase
